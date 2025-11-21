@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ganti Nomor — BSI Scholarship Hub</title>
+    <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body data-page="ganti-nomor">
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <a href="index.html" class="logo">
+            <div class="logo-mark">🎓</div>
+            <div class="logo-text">
+                <span class="logo-text-main">BSI Scholarship</span>
+                <span class="logo-text-sub">Sharia Young Leader</span>
+            </div>
+        </a>
+        <nav class="nav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="list-form.html" class="nav-link">List Form</a>
+            <a href="rekap.html" class="nav-link">Rekap Aktivitas</a>
+            <a href="ganti-nomor.html" class="nav-link nav-link--active">Ganti Nomor</a>
+        </nav>
+    </div>
+</header>
+
+    <main class="page page--split">
+        <section class="split-left card">
+            <h1 class="card-title">Ganti Nomor Kontak</h1>
+            <p class="card-text">
+                Jika kamu mengganti nomor WhatsApp atau email yang digunakan di program
+                BSI Scholarship, laporkan melalui form ini agar data di sistem selalu
+                terupdate.
+            </p>
+            <p class="card-text">
+                Untuk menjaga keamanan dan konsistensi, perubahan akan diverifikasi
+                menggunakan nomor induk yang sudah terdaftar.
+            </p>
+            <ul class="list">
+                <li>Siapkan nomor induk yang benar.</li>
+                <li>Pastikan nomor WhatsApp dan email aktif.</li>
+                <li>Cek kembali sebelum submit form.</li>
+            </ul>
+        </section>
+
+        <section class="split-right card card--form-panel">
+            <div class="alert alert--info">
+                Form ganti nomor ini juga bisa diarahkan ke Google Form terpisah
+                dengan mekanisme prefill yang sama seperti form lainnya.
+            </div>
+
+            <form class="nim-form" onsubmit="return handleChangeNumber(event)">
+                <label for="nim-change" class="nim-label">Nomor Induk</label>
+                <input
+                    id="nim-change"
+                    name="nim-change"
+                    type="text"
+                    class="nim-input"
+                    placeholder="I24XXXXX atau P24XXXXX"
+                    required
+                />
+                <p class="nim-hint">
+                    Nomor induk dapat dilihat dari portal Inspirasi / Prestasi.
+                </p>
+                <button type="submit" class="btn btn-primary btn-full">
+                    Lanjutkan ke Form Ganti Nomor →
+                </button>
+            </form>
+
+            <div id="change-number-result" class="cek-result"></div>
+        </section>
+    </main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <span>&copy; 2025 BSI Scholarship Hub. Built as a static site on GitHub Pages.</span>
+    </div>
+</footer>
+
+    <script src="scripts/main.js"></script>
+</body>
+</html>
