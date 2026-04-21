@@ -16,7 +16,8 @@
     _renderUI(cached.email, cached.name, cached.role, cached.nis || "", cached.kampus || "");
     // Langsung tampilkan admin link di sidebar + mobile nav dari cache
     if (cached.role === "admin") {
-      document.querySelectorAll("#navAdminLink").forEach(el => el.style.display = "flex");
+      const ag = document.getElementById("adminGroup");
+      if (ag) ag.style.display = "block";
       const mobAdmin = document.getElementById("mobNavAdmin");
       if (mobAdmin) mobAdmin.style.display = "flex";
     }
@@ -60,7 +61,8 @@
 
   // Admin link (sidebar + mobile nav)
   if (role === "admin") {
-    document.querySelectorAll("#navAdminLink").forEach(el => el.style.display = "flex");
+    const ag = document.getElementById("adminGroup");
+    if (ag) ag.style.display = "block";
     const mobAdmin = document.getElementById("mobNavAdmin");
     if (mobAdmin) mobAdmin.style.display = "flex";
   }
@@ -88,7 +90,7 @@ function _renderUI(email, name, role, nis = "", kampus = "") {
   const hSub      = document.getElementById("headerSubInfo");
 
   if (hAvatar) hAvatar.textContent = initials;
-  if (hGreeting) hGreeting.textContent = "Selamat datang,";
+  if (hGreeting) hGreeting.textContent = "Selamat Datang,";
   if (hName)   hName.textContent   = displayName;
   if (hBadge) {
     hBadge.textContent = role === "admin" ? "Administrator" : "Awardee";
@@ -108,12 +110,13 @@ function _renderUI(email, name, role, nis = "", kampus = "") {
   const sEmail  = document.getElementById("sidebarEmail");
   const sRole   = document.getElementById("sidebarRole");
   if (sAvatar) sAvatar.textContent = initials;
-  if (sEmail)  sEmail.textContent  = email;
+  if (sEmail)  sEmail.textContent  = displayName;
   if (sRole)   sRole.textContent   = role === "admin" ? "Administrator" : "Awardee";
 
   // Admin link (sinkron dari cache)
   if (role === "admin") {
-    document.querySelectorAll("#navAdminLink").forEach(el => el.style.display = "flex");
+    const ag = document.getElementById("adminGroup");
+    if (ag) ag.style.display = "block";
   }
 }
 
