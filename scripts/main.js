@@ -38,16 +38,21 @@ async function loadJson(path) {
 async function ensureDataLoaded() {
     if (mahasiswaData) return;
 
-    const { data, error } = await supabaseClient
-        .from("mahasiswa_bsi")
-        .select("no_induk, nama, kampus, kelompok, status");
-
-    console.log("SUPABASE DATA:", data);
-    console.log("SUPABASE ERROR:", error);
-
-    if (error) {
-        throw error;
+    // Fetch semua data bypass limit 1000
+    let allRows = [], from = 0, batchSize = 1000;
+    while (true) {
+        const { data, error } = await supabaseClient
+            .from("mahasiswa_bsi")
+            .select("no_induk, nama, kampus, kelompok, status")
+            .range(from, from + batchSize - 1);
+        if (error) throw error;
+        if (!data || data.length === 0) break;
+        allRows = allRows.concat(data);
+        if (data.length < batchSize) break;
+        from += batchSize;
     }
+    const data = allRows;
+    if (!data) throw new Error("No data");
 
     mahasiswaData = (data || []).map((m) => ({
         nim: String(m.no_induk || "").trim(),
