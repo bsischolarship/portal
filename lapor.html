@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Form | BSI Scholarship Inspirasi — Batch 5</title>
+    <title>Lapor | BSI Scholarship Inspirasi — Batch 5</title>
     <link rel="icon" href="assets/logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
     <link rel="stylesheet" href="assets/style.css" />
 </head>
 
-<body data-page="form" data-form-slug="tugas-pengganti" data-page="form">
+<body data-page="form" data-form-slug="lapor" data-page="lapor">
 
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -27,7 +27,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
         Home
       </a>
-      <a href="list-form.html" class="sidebar-link active">
+      <a href="list-form.html" class="sidebar-link">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg>
         List Form
       </a>
@@ -35,7 +35,7 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h4v8H3v-8zm7-6h4v14h-4V7zm7-4h4v18h-4V3z"/></svg>
         Rekap Aktivitas
       </a>
-      <a href="lapor.html" class="sidebar-link">
+      <a href="lapor.html" class="sidebar-link active">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Lapor
       </a>
@@ -64,7 +64,7 @@
   <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-  <div class="app-header-title">Tugas Pengganti</div>
+  <div class="app-header-title">Lapor</div>
     <div class="app-header-right">
     <div class="header-user-info" id="headerUserInfo">
       <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
@@ -76,82 +76,92 @@
   </div>
 </header>
   <main class="app-content">
-    <div class="centered-card">
-        <div class="header-section">
+  <div class="page--split">
+    <section class="split-left card card--guide">
+        <div class="pill pill--blue">Informasi Penting</div>
+        <h1 class="card-title card-title--big">🚨Form Lapor</h1>
+        <p class="card-text">
+        </p>
+        <ul class="list">
+            <li>Ketik nama lengkap kamu di kolom yang tersedia.</li>
+            <li>Klik Verifikasi Identitas dan pastikan data sudah benar.</li>
+            <li>Klik Buka Google Form & Lanjutkan.</li>
+            <li>Isi Google Form, lalu klik Kirim / Submit.</li>
+            <li>Simpan bukti submit email Google Form untuk arsip pribadi.</li>
+        </ul>
+        <div class="guide-placeholder">
+            <span class="guide-placeholder-label">Tenang,jangan panik ya!</span>
+            <p>
+            Jika kamu memliki kendala terkait kehadiran, pengisian tes, kesalahan data diri, 
+            mengganti nomor WhatsApp atau email yang digunakan dalam program BSI Scholarship,
+            atau kendala yang kamu hadapi selama mengikuti program pembinaan. 
+            Silakan lapor agar data di sistem tetap akurat.
+            </p>
+        </div>
+    </section>
+
+    <section class="split-right card card--form-panel">
+            <!-- MOBILE TITLE (hanya muncul di mobile) -->
+        <div class="mobile-form-title">
             <span class="hero-badge">Form Pengisian</span>
-            <h1 id="form-title-main" class="main-title">🧾 Tugas Pengganti Pembinaan & Mentoring</h1>
+            <h1 class="card-title card-title--big">🚨Form Lapor</h1>
+            <p class="card-text">
+                Form Lapor BSI Scholarship Inspirasi Batch 5.
+            </p>
         </div>
-
-<div class="alert alert--warning" id="form-banner">
+        <div class="alert alert--warning" id="form-banner">
             <strong>Perhatian.</strong>
-            <span>Cukup ketik nama lengkapmu, lalu verifikasi identitas. Jika identitas sudah sesuai, lanjut ke Form.</span>
+            <span>Cukup ketik nama lengkapmu, lalu verifikasi identitas.
+Jika identitas sudah sesuai dengan dirimu, lanjutkan Buka Google Form.</span>
         </div>
 
-<div id="section-input">
-            <div class="input-group">
-                <label for="nim" class="nim-label">Ketik Nama Lengkap</label>
-                <p class="nim-info">Pilih nama kamu dari daftar yang muncul.</p>
-                <div class="nim-field-wrapper">
-                    <input id="nim" type="text" class="nim-input" placeholder="Contoh: Naufal Rayyan" autocomplete="off" required />
-                    <div id="nim-suggestions" class="nim-suggestion-box"></div>
-                </div>
-                <button type="submit" onclick="handleVerification(event)" class="btn-full btn-success">
-                    Verifikasi Identitas
-                </button>
+        <form class="nim-form" onsubmit="return handleFormSubmit(event)">
+            <label for="nim" class="nim-label">Ketik Nama Lengkap</label>
+
+            <p class="nim-info">
+                 Nomor induk akan muncul otomatis setelah kamu mengetik nama.
+            </p>
+
+            <!-- === INPUT + AUTOCOMPLETE (DISAMAKAN DENGAN FORM YANG BERHASIL) === -->
+            <div class="nim-field-wrapper">
+                <input
+                    id="nim"
+                    name="nim"
+                    type="text"
+                    class="nim-input"
+                    placeholder="Contoh: Budi Santoso"
+                    autocomplete="off"
+                    required
+                />
+                <div id="nim-suggestions" class="nim-suggestion-box"></div>
             </div>
-        </div>
 
-<div id="section-validation" style="display: none;">
-    <div class="verification-header" style="text-align: center; margin-bottom: 20px;">
-        <div style="background: #e6f4f1; color: #2d5a5e; border-radius: 50%; width: 45px; height: 45px; line-height: 45px; margin: 0 auto 10px; font-weight: bold; font-size: 20px;">
-            👤
-        </div>
-        <h2 style="margin: 0; color: #00A79D; font-size: 20px;">Benarkah ini kamu? Silakan cek dulu ya!</h2>
-    </div>
+            <p class="nim-hint">
+                Pilih nama kamu dari daftar yang muncul. Lalu klik "Verifikasi Identitas"
+            </p>
 
-    <div style="background: #f9f9f9; border: 1px solid #eee; border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center;">
-        
-        <div style="margin-bottom: 15px;">
-            <strong id="v-nama" style="display: block; font-size: 18px; color: #1e293b; margin-bottom: 4px;">Nama Lengkap</strong>
-            <span id="v-univ" style="font-size: 14px; color: #666; display: block;">📍 Universitas</span>
-        </div>
+            <button type="submit" class="btn btn-success btn-full">
+                Verifikasi Identitas
+            </button>
+        </form>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eee; padding-top: 15px;">
-            <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #f0f0f0; text-align: center;">
-                <small style="color: #999; display: block; font-size: 10px; margin-bottom: 2px;">Nomor Induk</small>
-                <span id="v-nim" style="font-weight: bold; font-size: 13px; color: #333;">-</span>
-            </div>
-            <div style="background: white; padding: 10px; border-radius: 8px; border: 1px solid #f0f0f0; text-align: center;">
-                <small style="color: #999; display: block; font-size: 10px; margin-bottom: 2px;">Kategori</small>
-                <span id="v-kategori" style="font-weight: bold; font-size: 13px; color: #333;">INSPIRASI</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="alert alert--warning" style="font-size: 13px; margin-bottom: 15px;">
-        <strong>Pastikan ini data kamu sebelum lanjut.</strong> Kesalahan tidak dapat diperbaiki.
-    </div>
-
-    <button onclick="goToGoogleForm()" class="btn btn-success btn-full">Lanjut ke Form ➔</button>
-    <button onclick="cancelVerification()" class="btn-danger btn-full">Bukan saya ✕</button>
-</div>
+        <div id="cek-result" class="cek-result"></div>
 
         <div class="tips-box">
             <h3 class="tips-title">Tips Penting💡</h3>
             <ul class="list">
-                <li>Kamu akan diarahkan ke Google Form untuk mengirimkan tugas pengganti.</li>
+                <li>Kamu akan diarahkan ke Google Form untuk mengisi Form Lapor.</li>
                 <li>Di Google Form, identitas akan terisi otomatis. Tidak perlu mengisi ulang.</li>
                 <li>Jika muncul pesan “Continue current draft?”, klik tombol "Continue" lalu lanjutkan mengisi form.</li>
                 <li>Gunakan Email aktif (untuk konfirmasi dan arsip pribadi).</li>
                 <li>Jika terjadi error, coba refresh halaman.</li>
-                <li>Panduan Tugas Pengganti dapat dilihat di Awardee Portal
-                <a href="https://sites.google.com/view/awardee-portal/tata-tertib" target="_blank" rel="noopener">(klik disini)</a></li>
             </ul>
         </div>
     </section>
+  </div>
 </main>
 
-<!-- MOBILE BOTTOM NAV -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="scripts/main.js"></script>
 <script src="assets/auth.js"></script>
@@ -173,7 +183,7 @@ function closeSidebar() {
     <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
     <span>Home</span>
   </a>
-  <a href="list-form.html" class="mob-nav-item active">
+  <a href="list-form.html" class="mob-nav-item">
     <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
     <span>Form</span>
   </a>
@@ -181,7 +191,7 @@ function closeSidebar() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     <span>Rekap</span>
   </a>
-  <a href="lapor.html" class="mob-nav-item">
+  <a href="lapor.html" class="mob-nav-item active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     <span>Lapor</span>
   </a>

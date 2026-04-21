@@ -1,84 +1,1310 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home — BSI Scholarship Hub</title>
-    <link rel="stylesheet" href="assets/style.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Home | Inspirasi BSI Scholarship — Batch 5</title>
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+<link rel="stylesheet" href="assets/style.css" />
+
+<!-- ✅ ADD-ON (TIDAK MENGHAPUS APA PUN): kolom fixed 100%, minibar full, dropdown suggestion, font mobile kecil -->
+<style>
+  /* ===== TABLE: pastikan layout kolom stabil & minibar tidak “memendek” ===== */
+  .data-body table{
+    width:100%;
+    table-layout:fixed;
+    border-collapse:collapse;
+  }
+
+  .data-body th, .data-body td{
+    vertical-align:middle;
+  }
+
+  /* Lebar kolom sesuai permintaan: # 6%, Nama 44%, Hadir 20%, Perc. 30% */
+  .data-body th:nth-child(1), .data-body td:nth-child(1){ width:15%;  text-align:center; }
+  .data-body th:nth-child(2), .data-body td:nth-child(2){ width:45%; text-align:left; }
+  .data-body th:nth-child(3), .data-body td:nth-child(3){ width:20%; text-align:center; }
+  .data-body th:nth-child(4), .data-body td:nth-child(4){ width:20%; }
+
+  /* Nama rata kiri + aman kalau panjang (tidak mengganggu minibar) */
+  .data-body td:nth-child(2){
+    text-align:left;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  /* ===== PROGRESS BAR: selalu 100% lebar kolom ===== */
+  .progress-wrap{
+    display:flex;
+    align-items:center;
+    gap:2px;
+    width:100%;
+  }
+  .progress{
+    position:relative;
+    flex:1;
+    width:100%;
+    height:10px;
+    border-radius:999px;
+    overflow:hidden;
+    background:#eee;
+  }
+  .percent{
+    min-width:44px;
+    text-align:right;
+  }
+
+  /* Warna minibar sesuai permintaan:
+     - hijau untuk paling aktif
+     - merah untuk kurang aktif
+  */
+  .good-bar{ height:100%; background:#1fbf75; }
+  .bad-bar{  height:100%; background:#e55353; }
+
+  /* ===== HEADER + SEARCH (kanan) ===== */
+  .data-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .data-head .head-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .data-head .head-search{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .data-head .head-search input{
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,.15);
+    outline:none;
+    min-width:240px;
+    max-width:340px;
+    background:#fff;
+  }
+  .data-head .head-search input:focus{
+    border-color: rgba(0,167,157,.6);
+    box-shadow: 0 0 0 3px rgba(0,167,157,.12);
+  }
+
+  /* Dropdown suggestion */
+  .search-dropdown{
+    position:absolute;
+    top:calc(100% + 6px);
+    left:0;
+    right:0;
+    background:#fff;
+    border:1px solid rgba(0,0,0,.12);
+    border-radius:12px;
+    overflow:hidden;
+    z-index:999;
+    max-height:260px;
+    overflow-y:auto;
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+  }
+  .search-item{
+    padding:10px 12px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:13px;
+    line-height:1.2;
+  }
+  .search-item:hover{
+    background:rgba(0,167,157,.08);
+  }
+  .search-item .si-name{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    flex:1;
+  }
+  .search-item .si-rank{
+    opacity:.7;
+    flex:0 0 auto;
+    font-size:12px;
+  }
+  .search-empty{
+    padding:10px 12px;
+    font-size:13px;
+    opacity:.7;
+  }
+
+  /* Klik aman: pastikan elemen rank (emoji/angka) tidak “nangkap” klik */
+  .rank{ pointer-events:none; }
+
+  /* Mobile: input full width & font kecil */
+  @media (max-width: 640px){
+    .data-head .head-search{ width:100%; }
+    .data-head .head-search input{
+      width:100%;
+      min-width:unset;
+      max-width:unset;
+      font-size:12px;
+      padding:8px 10px;
+    }
+    .data-body th, .data-body td{ font-size:12px; }
+    .percent{ font-size:11px; min-width:40px; }
+    .search-item{ font-size:12px; padding:10px; }
+    .search-item .si-rank{ font-size:11px; }
+    .data-body td:nth-child(2){ white-space:normal; } /* mobile boleh wrap sedikit */
+  }
+
+  /* ==========================================================
+     ✅ ADDITION: TAB + SLIDE + FILTER + PAGINATION
+  ========================================================== */
+  .head-actions{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    flex:0 0 auto;
+  }
+  .tab-btn{
+    border:none;
+    padding:6px 10px;
+    border-radius:10px;
+    font-size:12px;
+    cursor:pointer;
+    background:rgba(0,0,0,.06);
+  }
+  .tab-btn.active{
+    background:rgba(0,167,157,.16);
+    color:#006b64;
+    font-weight:700;
+  }
+
+  .card-slide{ display:none; }
+  .card-slide.active{ display:block; }
+
+  .filter-panel{
+    width:100%;
+    background:rgba(0,0,0,.03);
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:12px;
+    padding:10px;
+    display:grid;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .filter-panel.is-collapsed{
+    display:none;
+  }
+  .filter-openbar{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:8px;
+  }
+  .btn-open-filter{
+    padding:8px 10px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:800;
+    background:rgba(0,0,0,.06);
+  }
+
+  .filter-group{
+    display:grid;
+    gap:6px;
+  }
+  .filter-label{
+    font-size:12px;
+    font-weight:700;
+    opacity:.9;
+  }
+  .filter-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  .op-toggle{
+    display:flex;
+    gap:8px;
+  }
+  .op-btn{
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px solid rgba(0,0,0,.12);
+    background:#fff;
+    cursor:pointer;
+    font-weight:800;
+    font-size:12px;
+  }
+  .op-btn.active{
+    background:rgba(0,167,157,.16);
+    border-color: rgba(0,167,157,.35);
+    color:#006b64;
+  }
+
+  .filter-row input[type="number"]{
+    padding:8px 10px;
+    border-radius:10px;
+    border:1px solid rgba(0,0,0,.12);
+    font-size:12px;
+    outline:none;
+    background:#fff;
+    width:110px;
+  }
+  .filter-row input[type="range"]{
+    width:100%;
+  }
+  .month-grid{
+    display:grid;
+    grid-template-columns:repeat(3, minmax(0, 1fr));
+    gap:6px;
+    font-size:12px;
+  }
+  .month-grid label{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px solid rgba(0,0,0,.08);
+    background:#fff;
+    cursor:pointer;
+    user-select:none;
+  }
+  .month-grid input{ transform: translateY(1px); }
+
+  .btn-apply{
+    padding:10px 12px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:800;
+    background:rgba(0,167,157,.18);
+    color:#006b64;
+  }
+  .btn-apply:hover{ background:rgba(0,167,157,.24); }
+
+  .full-table{
+    width:100%;
+    table-layout:fixed;
+    border-collapse:collapse;
+  }
+  .full-table th,
+  .full-table td{
+    padding:8px 10px;
+    border-bottom:1px solid rgba(0,0,0,.08);
+    font-size:12px;
+    vertical-align:middle;
+  }
+
+  .pager{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .pager-left, .pager-right{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .pager-btn{
+    border:none;
+    padding:8px 10px;
+    border-radius:12px;
+    background:rgba(0,0,0,.06);
+    cursor:pointer;
+    font-weight:800;
+    font-size:12px;
+  }
+  .pager-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+  }
+  .pager-info{
+    font-size:12px;
+    opacity:.85;
+    font-weight:700;
+  }
+</style>
+
 </head>
-<body data-page="home">
 
-<header class="topbar">
-    <div class="topbar-inner">
-        <a href="index.html" class="logo">
-            <div class="logo-mark">🎓</div>
-            <div class="logo-text">
-                <span class="logo-text-main">BSI Scholarship</span>
-                <span class="logo-text-sub">Sharia Young Leader</span>
-            </div>
-        </a>
-        <nav class="nav">
-            <a href="index.html" class="nav-link nav-link--active">Home</a>
-            <a href="list-form.html" class="nav-link">List Form</a>
-            <a href="rekap.html" class="nav-link">Rekap Aktivitas</a>
-            <a href="ganti-nomor.html" class="nav-link">Ganti Nomor</a>
-        </nav>
+<body data-page="home" data-page="home">
+
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/logo.png" alt="BSI">
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-title">BSI Scholarship Inspirasi</div>
+      <span class="sidebar-brand-sub">Batch 5</span>
     </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+      <a href="index.html" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+        Home
+      </a>
+      <a href="list-form.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg>
+        List Form
+      </a>
+      <a href="rekap.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h4v8H3v-8zm7-6h4v14h-4V7zm7-4h4v18h-4V3z"/></svg>
+        Rekap Aktivitas
+      </a>
+      <a href="lapor.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Lapor
+      </a>
+    <a href="admin.html" id="navAdminLink" class="sidebar-link" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3.09 6.26L22 8.27l-5 4.87 1.18 6.88L12 16.9l-6.18 3.12L7 13.14 2 8.27l6.91-1.01L12 1z"/></svg>
+      Admin
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
+      <span class="sidebar-user-avatar" id="sidebarAvatar">?</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarEmail">Memuat...</div>
+        <div class="sidebar-user-role" id="sidebarRole">BSI Scholarship</div>
+      </div>
+    </a>
+    <button class="sidebar-logout" onclick="authLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar dari Akun
+    </button>
+  </div>
+</aside>
+<div class="app-main">
+
+<header class="app-header">
+  <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="app-header-title">Home</div>
+    <div class="app-header-right">
+    <div class="header-user-info" id="headerUserInfo">
+      <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+      <span class="header-role-badge" id="headerRoleBadge">Awardee</span>
+    </div>
+    <a href="profile.html" class="header-avatar-btn" id="navUserBtn">
+      <span class="header-avatar" id="headerAvatar">?</span>
+    </a>
+  </div>
 </header>
+  <main class="app-content">
 
-    <main class="page">
-        <section class="hero hero--center">
-            <div class="hero-badge">Hi, Sharia Young Leader! ✨</div>
-            <h1 class="hero-title">Mau apa kamu hari ini?</h1>
-            <p class="hero-subtitle">
-                Pilih aktivitas yang ingin kamu lakukan. Akses portal resmi, cek form,
-                dan isi laporan aktivitas dengan alur yang simpel dan rapi.
-            </p>
-            <div class="hero-actions">
-                <a href="list-form.html" class="btn btn-primary">Lihat Semua Form</a>
-                <a href="#quick-actions" class="btn btn-ghost">Aksi Cepat</a>
+<section class="hero hero--compact hero--dashboard">
+
+    <div class="hero-badge">Assalamu'alaikum, Sharia Young Leader!</div>
+
+    <h1 class="hero-title">
+        BSI Scholarship Inspirasi Batch 5
+    </h1>
+
+    <p class="hero-subtitle">
+        Yuk cari yang kamu butuhkan.
+    </p>
+
+    <!-- ACTION CARDS -->
+    <div class="hero-card-grid">
+
+        <!-- LIHAT SEMUA FORM -->
+        <a href="list-form.html" class="hero-card hero-card--blue">
+            <div class="hero-card-header">
+                <svg class="hero-card-icon" viewBox="0 0 24 24">
+                    <path d="M4 4h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/>
+                </svg>
+                <h3 class="hero-card-title">Mengisi Form</h3>
             </div>
-        </section>
+            <p class="hero-card-text">
+                Isi form kehadiran, tugas pengganti, pre test, post test.
+            </p>
+        </a>
 
-        <section id="quick-actions" class="card-grid card-grid--3">
-            <a href="https://inspirasi.bsischolarhub.id/" target="_blank" rel="noopener" class="card card--action">
-                <div class="card-icon card-icon--purple">✨</div>
-                <h2 class="card-title">Akses Portal BSI Inspirasi</h2>
-                <p class="card-text">
-                    Masuk ke portal BSI Inspirasi untuk melihat jadwal, materi,
-                    dan informasi pembinaan terbaru.
-                </p>
-                <span class="card-link">Buka Portal Inspirasi →</span>
-            </a>
+        <!-- AWARDEE PORTAL -->
+        <a href="https://sites.google.com/view/awardee-portal"
+        class="hero-card hero-card--teal"
+        target="_blank"
+        rel="noopener noreferrer">
+            <div class="hero-card-header">
+                <svg class="hero-card-icon" viewBox="0 0 24 24">
+                    <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 5v3h16v-3c0-3-4-5-8-5z"/>
+                </svg>
+                <h3 class="hero-card-title">Awardee Portal</h3>
+            </div>
+            <p class="hero-card-text">
+                Informasi & pembinaan resmi.
+            </p>
+        </a>
 
-            <a href="https://prestasi.bsischolarhub.id/" target="_blank" rel="noopener" class="card card--action">
-                <div class="card-icon card-icon--gold">⭐</div>
-                <h2 class="card-title">Akses Portal BSI Prestasi</h2>
-                <p class="card-text">
-                    Kelola data prestasi dan aktivitas kamu sebagai Sharia Young Leader
-                    di portal BSI Prestasi.
-                </p>
-                <span class="card-link">Buka Portal Prestasi →</span>
-            </a>
+        <!-- REKAP AKTIVITAS -->
+        <a href="rekap.html" class="hero-card hero-card--yellow">
+            <div class="hero-card-header">
+                <svg class="hero-card-icon" viewBox="0 0 24 24">
+                    <path d="M3 17h3v-7H3zm5 0h3V7H8zm5 0h3v-4h-3zm5 0h3V4h-3z"/>
+                </svg>
+                <h3 class="hero-card-title">Rekap Aktivitas</h3>
+            </div>
+            <p class="hero-card-text">
+                Detail kehadiran & evaluasi.
+            </p>
+        </a>
 
-            <a href="list-form.html" class="card card--action">
-                <div class="card-icon card-icon--blue">📝</div>
-                <h2 class="card-title">Mengisi Form</h2>
-                <p class="card-text">
-                    Lihat daftar form yang tersedia, mulai dari kehadiran pembinaan,
-                    tugas pengganti, sampai evaluasi.
-                </p>
-                <span class="card-link">Lihat List Form →</span>
-            </a>
-        </section>
-    </main>
-
-<footer class="footer">
-    <div class="footer-inner">
-        <span>&copy; 2025 BSI Scholarship Hub. Built as a static site on GitHub Pages.</span>
     </div>
-</footer>
+</section>
 
-    <script src="scripts/main.js"></script>
+<section class="kpi-grid">
+  <div class="card card--kpi kpi-blue"><div>Total Awardee</div><strong id="kpiPeserta">—</strong></div>
+  <div class="card card--kpi kpi-yellow"><div>Total Aktivitas</div><strong id="kpiAktivitas">—</strong></div>
+  <div class="card card--kpi kpi-blue"><div>Rata-rata Partisipasi</div><strong id="kpiRate">—%</strong></div>
+  <div class="card card--kpi kpi-yellow"><div>Total Kampus</div><strong id="kpiCampus">—</strong></div>
+</section>
+
+<section class="frame-2col">
+
+  <!-- =================== PESERTA TOP =================== -->
+  <div class="data-card" data-entity="peserta" data-which="top" data-card-id="peserta-top">
+    <div class="data-head good">
+      <div class="head-title">🏆 Top 10 Awardee Paling Aktif</div>
+
+      <div class="head-actions">
+        <button class="tab-btn active" type="button" data-tab="summary">Top 10</button>
+        <button class="tab-btn" type="button" data-tab="filter">Filter</button>
+      </div>
+
+      <div class="head-search">
+        <input id="searchPesertaTop" type="search" placeholder="Cari peserta..." autocomplete="off"
+               oninput="showSuggestions('peserta','top',this)" onfocus="showSuggestions('peserta','top',this)">
+        <div class="search-dropdown" hidden></div>
+      </div>
+    </div>
+
+    <div class="data-body">
+      <div class="card-slide active" data-slide="summary">
+        <table id="tblPesertaTop"></table>
+      </div>
+
+      <div class="card-slide" data-slide="filter">
+        <div class="filter-panel">
+          <div class="filter-group">
+            <div class="filter-label">Filter Persentase</div>
+            <div class="filter-row">
+              <div class="op-toggle" role="group" aria-label="operator">
+                <button class="op-btn active" type="button" data-op=">=">Di atas (≥)</button>
+                <button class="op-btn" type="button" data-op="<=">Di bawah (≤)</button>
+              </div>
+              <input class="percent-input" type="number" min="0" max="100" value="75" aria-label="persentase"> <span>%</span>
+            </div>
+            <input class="percent-range" type="range" min="0" max="100" value="75">
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Periode (Des 2025 – Nov 2026) (multi)</div>
+            <div class="month-grid" data-months></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Aktivitas (multi)</div>
+            <div class="month-grid activity-grid" data-activities>
+              <label><input type="checkbox" value="pre_test" checked> Pre Test</label>
+              <label><input type="checkbox" value="post_test" checked> Post Test</label>
+              <label><input type="checkbox" value="assessment" checked> Assessment</label>
+              <label><input type="checkbox" value="mentoring" checked> Mentoring</label>
+              <label><input type="checkbox" value="pembinaan" checked> Pembinaan</label>
+            </div>
+          </div>
+
+          <button class="btn-apply" type="button">Terapkan Filter</button>
+        </div>
+
+        <div class="filter-openbar" hidden>
+          <button class="btn-open-filter" type="button">Ubah Filter</button>
+        </div>
+
+        <table class="full-table"></table>
+
+        <div class="pager" hidden>
+          <div class="pager-left">
+            <button class="pager-btn btn-first" type="button">First</button>
+            <button class="pager-btn btn-prev" type="button">Prev</button>
+          </div>
+          <div class="pager-info">Page <span class="pg-now">1</span>/<span class="pg-total">1</span></div>
+          <div class="pager-right">
+            <button class="pager-btn btn-next" type="button">Next</button>
+            <button class="pager-btn btn-last" type="button">Last</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+  <!-- =================== KELOMPOK TOP =================== -->
+  <div class="data-card" data-entity="kelompok" data-which="top" data-card-id="kelompok-top">
+    <div class="data-head good">
+      <div class="head-title">👥 Top 10 Kelompok Aktif</div>
+
+      <div class="head-actions">
+        <button class="tab-btn active" type="button" data-tab="summary">Top 10</button>
+        <button class="tab-btn" type="button" data-tab="filter">Filter</button>
+      </div>
+
+      <div class="head-search">
+        <input id="searchKelompokTop" type="search" placeholder="Cari kelompok..." autocomplete="off"
+               oninput="showSuggestions('kelompok','top',this)" onfocus="showSuggestions('kelompok','top',this)">
+        <div class="search-dropdown" hidden></div>
+      </div>
+    </div>
+
+    <div class="data-body">
+      <div class="card-slide active" data-slide="summary">
+        <table id="tblKelompokTop"></table>
+      </div>
+
+      <div class="card-slide" data-slide="filter">
+        <div class="filter-panel">
+          <div class="filter-group">
+            <div class="filter-label">Filter Persentase</div>
+            <div class="filter-row">
+              <div class="op-toggle" role="group" aria-label="operator">
+                <button class="op-btn active" type="button" data-op=">=">Di atas (≥)</button>
+                <button class="op-btn" type="button" data-op="<=">Di bawah (≤)</button>
+              </div>
+              <input class="percent-input" type="number" min="0" max="100" value="75" aria-label="persentase"> <span>%</span>
+            </div>
+            <input class="percent-range" type="range" min="0" max="100" value="75">
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Periode (Des 2025 – Nov 2026) (multi)</div>
+            <div class="month-grid" data-months></div>
+          </div>
+
+          <div class="filter-group">
+            <div class="filter-label">Aktivitas (multi)</div>
+            <div class="month-grid activity-grid" data-activities>
+              <label><input type="checkbox" value="pre_test" checked> Pre Test</label>
+              <label><input type="checkbox" value="post_test" checked> Post Test</label>
+              <label><input type="checkbox" value="assessment" checked> Assessment</label>
+              <label><input type="checkbox" value="mentoring" checked> Mentoring</label>
+              <label><input type="checkbox" value="pembinaan" checked> Pembinaan</label>
+            </div>
+          </div>
+
+          <button class="btn-apply" type="button">Terapkan Filter</button>
+        </div>
+
+        <div class="filter-openbar" hidden>
+          <button class="btn-open-filter" type="button">Ubah Filter</button>
+        </div>
+
+        <table class="full-table"></table>
+
+        <div class="pager" hidden>
+          <div class="pager-left">
+            <button class="pager-btn btn-first" type="button">First</button>
+            <button class="pager-btn btn-prev" type="button">Prev</button>
+          </div>
+          <div class="pager-info">Page <span class="pg-now">1</span>/<span class="pg-total">1</span></div>
+          <div class="pager-right">
+            <button class="pager-btn btn-next" type="button">Next</button>
+            <button class="pager-btn btn-last" type="button">Last</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+</section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/main.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const sb = window.supabaseClient;
+  if (!sb) return;
+
+  window.goRekap = function(type, value){
+    window.location.href =
+      `rekap.html?type=${type}&value=${encodeURIComponent(value)}`;
+  }
+
+const PAGE_SIZE = 1000;
+let from = 0;
+let rows = [];
+
+while (true) {
+
+  const { data, error } = await sb
+    .from("rekap_bsi")
+    .select("no_induk,nama,kampus,kelompok,pre_test,post_test,assessment,mentoring,pembinaan")
+    .range(from, from + PAGE_SIZE - 1);
+
+  if (error) {
+    console.error(error);
+    break;
+  }
+
+  if (!data || data.length === 0) break;
+
+  rows.push(...data);
+
+  if (data.length < PAGE_SIZE) break;
+
+  from += PAGE_SIZE;
+}
+
+  // ✅ hadirin kalau OK / TP
+  const isH = v => v === "✅" || v === "TP";
+
+  // ✅ dianggap "ada nilainya" kalau tidak kosong/null
+  const isFilled = v => v !== null && v !== undefined && String(v).trim() !== "";
+
+  const peserta = {};
+  const kampus = {};
+  const kelompok = {};
+
+  // totalAct = total aktivitas yang DINILAI (ada value)
+  // totalHad = total aktivitas yang OK/TP
+  let totalAct = 0, totalHad = 0;
+
+  rows.forEach(r => {
+    const acts = [r.pre_test, r.post_test, r.assessment, r.mentoring, r.pembinaan];
+
+    // hanya yang ada nilainya ikut pembagi
+    const evaluated = acts.filter(isFilled);
+    const hadir = evaluated.filter(isH).length;
+
+    totalAct += evaluated.length;
+    totalHad += hadir;
+
+    // peserta
+    peserta[r.no_induk] ??= { nama: r.nama, hadir: 0, total: 0 };
+    peserta[r.no_induk].hadir += hadir;
+    peserta[r.no_induk].total += evaluated.length;
+
+    // kampus
+    kampus[r.kampus] ??= { nama: r.kampus, hadir: 0, total: 0 };
+    kampus[r.kampus].hadir += hadir;
+    kampus[r.kampus].total += evaluated.length;
+
+    // kelompok
+    kelompok[r.kelompok] ??= { nama: r.kelompok, hadir: 0, total: 0 };
+    kelompok[r.kelompok].hadir += hadir;
+    kelompok[r.kelompok].total += evaluated.length;
+  });
+
+  // ✅ sort: kalau total=0, anggap rate 0 supaya tidak NaN
+  const safeRate = x => (x.total > 0 ? (x.hadir / x.total) : 0);
+  const sortFn = (a,b)=> safeRate(b) - safeRate(a) || b.hadir - a.hadir;
+
+  // Build activities map per entity for filter "Aktivitas (multi)"
+  function buildActivitiesMap(rows){
+    const map = {};
+    rows.forEach(r=>{
+      const acts = {
+        pre_test: r.pre_test,
+        post_test: r.post_test,
+        assessment: r.assessment,
+        mentoring: r.mentoring,
+        pembinaan: r.pembinaan
+      };
+      Object.keys(acts).forEach(k=>{
+        if(acts[k] !== null && acts[k] !== undefined && String(acts[k]).trim() !== ""){
+          map[k] = (map[k] || 0) + 1;
+        }
+      });
+    });
+    return map;
+  }
+
+const activityMap = buildActivitiesMap(rows);  
+const arrPeserta = Object.values(peserta)
+  .map(x => ({ ...x, rate: safeRate(x), activities: activityMap }))
+  .sort(sortFn);
+
+const arrKampus  = Object.values(kampus)
+  .map(x => ({ ...x, rate: safeRate(x), activities: activityMap }))
+  .sort(sortFn);
+
+const arrKelompok= Object.values(kelompok)
+  .map(x => ({ ...x, rate: safeRate(x), activities: activityMap }))
+  .sort(sortFn);
+
+  kpiPeserta.textContent = Object.keys(peserta).length;
+
+  // total aktivitas yang benar-benar ada datanya (bukan 5 * rows)
+  kpiAktivitas.textContent = totalAct;
+
+  // kalau totalAct=0, tampil 0% (hindari NaN)
+  kpiRate.textContent = (totalAct > 0)
+    ? (Math.round((totalHad / totalAct) * 100) + "%")
+    : "0%";
+
+  kpiCampus.textContent = Object.keys(kampus).length;
+
+  function render(el, arr, type, barClass, start = 0){
+    let h = "<tr><th>#</th><th>Nama</th><th>Partisipasi</th><th>Persentase</th></tr>";
+    arr.slice(start, start + 10).forEach((a,i)=>{
+      const pct = Math.round((a.rate || 0) * 100);
+      const rank = start + i + 1;
+      const icon =
+        rank===1?"🥇":
+        rank===2?"🥈":
+        rank===3?"🥉":
+        rank;
+
+      h += `
+      <tr class="click-row ${i<3?`top${i+1}`:""}"
+          onclick="goRekap('${type}','${a.nama}')">
+        <td class="center rank">${icon}</td>
+        <td><strong>${a.nama}</strong></td>
+        <td class="center">${a.hadir} dari ${a.total}</td>
+        <td>
+          <div class="progress-wrap">
+            <div class="progress">
+              <div class="${barClass}" style="width:${pct}%"></div>
+            </div>
+            <span class="percent">${pct}%</span>
+          </div>
+        </td>
+      </tr>`;
+    });
+    el.innerHTML = h;
+  }
+
+  function renderSearchOne(el, item, type, barClass){
+    const pct = Math.round((item.rate || 0) * 100);
+    const rankText = item.rank ?? "-";
+    let h = "<tr><th>#</th><th>Nama</th><th>Hadir</th><th>Perc.</th></tr>";
+    h += `
+      <tr class="click-row"
+          onclick="goRekap('${type}','${item.nama}')">
+        <td class="center rank">${rankText}</td>
+        <td><strong>${item.nama}</strong></td>
+        <td class="center">${item.hadir} dari ${item.total}</td>
+        <td>
+          <div class="progress-wrap">
+            <div class="progress">
+              <div class="${barClass}" style="width:${pct}%"></div>
+            </div>
+            <span class="percent">${pct}%</span>
+          </div>
+        </td>
+      </tr>
+    `;
+    el.innerHTML = h;
+  }
+
+  /* ✅ SIMPAN RANK GLOBAL (dipakai suggestion, tidak mengubah logika utama) */
+  window.__RANK_STORE__ = {
+    peserta: arrPeserta.map((x,i)=>({ ...x, rank:i+1 })),
+    kampus: arrKampus.map((x,i)=>({ ...x, rank:i+1 })),
+    kelompok: arrKelompok.map((x,i)=>({ ...x, rank:i+1 })),
+  };
+
+  /* ✅ Render top/bottom tetap seperti sebelumnya */
+    let pesertaTopPage = 0;
+    let kelompokTopPage = 0;
+
+    function renderPesertaTop(){
+      render(
+        tblPesertaTop,
+        arrPeserta,
+        "peserta",
+        "good-bar",
+        pesertaTopPage * 10
+      );
+    }
+
+    function renderKelompokTop(){
+      render(
+        tblKelompokTop,
+        arrKelompok,
+        "kelompok",
+        "good-bar",
+        kelompokTopPage * 10
+      );
+    }
+
+    renderPesertaTop();
+    renderKelompokTop();
+
+
+    // scroll peserta
+    tblPesertaTop.addEventListener("wheel",(e)=>{
+      if(e.deltaY > 0){
+        pesertaTopPage++;
+      }else{
+        pesertaTopPage = Math.max(0, pesertaTopPage - 1);
+      }
+      renderPesertaTop();
+    });
+
+    // scroll kelompok
+    tblKelompokTop.addEventListener("wheel",(e)=>{
+      if(e.deltaY > 0){
+        kelompokTopPage++;
+      }else{
+        kelompokTopPage = Math.max(0, kelompokTopPage - 1);
+      }
+      renderKelompokTop();
+    });
+
+    document.addEventListener("keydown",(e)=>{
+
+      if(e.key === "ArrowRight"){
+        pesertaTopPage++;
+        kelompokTopPage++;
+
+        renderPesertaTop();
+        renderKelompokTop();
+      }
+
+      if(e.key === "ArrowLeft"){
+        pesertaTopPage = Math.max(0, pesertaTopPage - 1);
+        kelompokTopPage = Math.max(0, kelompokTopPage - 1);
+
+        renderPesertaTop();
+        renderKelompokTop();
+      }
+
+    });
+
+  /* ===== Dropdown Suggestion (multi hasil) ===== */
+  const limitSuggest = 15;
+
+  function hideDropdown(dd){
+    if(!dd) return;
+    dd.hidden = true;
+    dd.innerHTML = "";
+  }
+
+  function getTargetEl(kind, which){
+    if(kind==="peserta" && which==="top") return tblPesertaTop;
+    if(kind==="peserta" && which==="low") return tblPesertaLow;
+    if(kind==="kampus" && which==="top") return tblKampusTop;
+    if(kind==="kampus" && which==="low") return tblKampusLow;
+    if(kind==="kelompok" && which==="top") return tblKelompokTop;
+    return tblKelompokLow;
+  }
+
+  function resetTable(kind, which){
+    if(kind==="peserta" && which==="top") return render(tblPesertaTop, arrPeserta, "peserta", "good-bar");
+    if(kind==="peserta" && which==="low") return render(tblPesertaLow, arrPeserta.slice().reverse(), "peserta", "bad-bar");
+    if(kind==="kampus" && which==="top") return render(tblKampusTop, arrKampus, "kampus", "good-bar");
+    if(kind==="kampus" && which==="low") return render(tblKampusLow, arrKampus.slice().reverse(), "kampus", "bad-bar");
+    if(kind==="kelompok" && which==="top") return render(tblKelompokTop, arrKelompok, "kelompok", "good-bar");
+    if(kind==="kelompok" && which==="low") return render(tblKelompokLow, arrKelompok.slice().reverse(), "kelompok", "bad-bar");
+  }
+
+  window.showSuggestions = function(kind, which, input){
+    const store = window.__RANK_STORE__;
+    if(!store || !store[kind]) return;
+
+    const q = (input.value || "").trim().toLowerCase();
+    const dd = input.nextElementSibling;
+
+    if(!q){
+      hideDropdown(dd);
+      resetTable(kind, which);
+      return;
+    }
+
+    const matches = store[kind]
+      .filter(x => (x.nama || "").toLowerCase().includes(q))
+      .slice(0, limitSuggest);
+
+    dd.innerHTML = "";
+
+    if(!matches.length){
+      dd.innerHTML = `<div class="search-empty">Tidak ditemukan</div>`;
+      dd.hidden = false;
+      return;
+    }
+
+    matches.forEach(item=>{
+      const row = document.createElement("div");
+      row.className = "search-item";
+      row.innerHTML = `<div class="si-name">${item.nama}</div><div class="si-rank">Rank ${item.rank}</div>`;
+      row.onclick = () => {
+        const targetEl = getTargetEl(kind, which);
+        const typeForRekap = (kind === "peserta") ? "peserta" : (kind === "kampus" ? "kampus" : "kelompok");
+        const barClass = (which === "top") ? "good-bar" : "bad-bar";
+        renderSearchOne(targetEl, item, typeForRekap, barClass);
+        hideDropdown(dd);
+      };
+      dd.appendChild(row);
+    });
+
+    dd.hidden = false;
+  };
+
+  /* Klik di luar -> tutup dropdown */
+  document.addEventListener("click", (e)=>{
+    document.querySelectorAll(".search-dropdown").forEach(dd=>{
+      const wrap = dd.parentElement;
+      if(!wrap) return;
+      if(!wrap.contains(e.target)) hideDropdown(dd);
+    });
+  });
+
+  /* ==========================================================
+     ✅ ADDITION: FILTER SLIDE + AUTO CLOSE + PAGINATION (10)
+  ========================================================== */
+
+  const FILTER_PAGE_SIZE = 10;
+
+  const filterState = {}; // per card-id: { op, pct, months[], page, items[] }
+
+  function monthLabel(d){
+    return d.toLocaleString("id-ID", { month: "short", year: "numeric" });
+  }
+
+  function buildMonthOptions(container){
+    container.innerHTML = "";
+    const start = new Date(2025, 11, 1); // Dec 2025 (0-based)
+    for(let i=0;i<12;i++){
+      const d = new Date(start.getFullYear(), start.getMonth()+i, 1);
+      const ym = d.toISOString().slice(0,7); // YYYY-MM
+      const label = monthLabel(d);
+      const lab = document.createElement("label");
+      lab.innerHTML = `<input type="checkbox" value="${ym}"> ${label}`;
+      container.appendChild(lab);
+    }
+  }
+  document.querySelectorAll("[data-months]").forEach(buildMonthOptions);
+
+  // Sync slider <-> number + bind operator buttons + apply/pager
+  document.querySelectorAll(".data-card").forEach(card=>{
+    const cardId = card.getAttribute("data-card-id") || (card.dataset.entity + "-" + card.dataset.which);
+
+    filterState[cardId] = { op: ">=", pct: 75, months: [], page: 1, items: [] };
+
+    const range = card.querySelector(".percent-range");
+    const input = card.querySelector(".percent-input");
+    const panel = card.querySelector(".filter-panel");
+    const openbar = card.querySelector(".filter-openbar");
+    const btnOpen = card.querySelector(".btn-open-filter");
+    const btnApply = card.querySelector(".btn-apply");
+    const opBtns = card.querySelectorAll(".op-btn");
+    const monthChecks = () => [...card.querySelectorAll("[data-months] input:checked")].map(x=>x.value);
+
+        const actChecks = () => [...card.querySelectorAll("[data-activities] input:checked")].map(x=>x.value);
+
+    // Default op based on active button
+    const activeOpBtn = card.querySelector(".op-btn.active");
+    if(activeOpBtn){
+      filterState[cardId].op = activeOpBtn.getAttribute("data-op") || ">=";
+    }
+
+    if(range && input){
+      range.addEventListener("input", ()=>{ input.value = range.value; });
+      input.addEventListener("input", ()=>{
+        const v = Math.max(0, Math.min(100, Number(input.value || 0)));
+        input.value = String(v);
+        range.value = String(v);
+      });
+    }
+
+    // Operator toggle
+    opBtns.forEach(b=>{
+      b.addEventListener("click", ()=>{
+        opBtns.forEach(x=>x.classList.remove("active"));
+        b.classList.add("active");
+        filterState[cardId].op = b.getAttribute("data-op") || ">=";
+      });
+    });
+
+    // Apply
+    if(btnApply){
+      btnApply.addEventListener("click", ()=>{
+        const entity = card.dataset.entity;
+        const pct = Math.max(0, Math.min(100, Number(input ? input.value : 0)));
+        const op = filterState[cardId].op;
+        const months = monthChecks();
+
+        const base = (window.__RANK_STORE__ && window.__RANK_STORE__[entity]) ? window.__RANK_STORE__[entity].slice() : [];
+
+        let filtered = base.filter(x=>{
+          const p = Math.round((x.rate || 0) * 100);
+          return (op === ">=") ? (p >= pct) : (p <= pct);
+        });
+
+        // Period filter if property exists; if not present, let through
+        if(months.length){
+          filtered = filtered.filter(x=>{
+            const per = x.periode || x.period || x.month || "";
+            if(!per) return true;
+            return months.includes(String(per).slice(0,7));
+          });
+        }
+
+        // Aktivitas filter (multi): jika data punya breakdown aktivitas, gunakan; jika tidak, biarkan lolos
+        const acts = actChecks();
+        if(acts && acts.length){
+          filtered = filtered.filter(x=>{
+            // x.activities expected as map {pre_test:1, post_test:0,...} OR counts by activity
+            if(!x.activities) return true;
+            return acts.some(a => (x.activities[a] || 0) > 0);
+          });
+        }
+
+        filterState[cardId].pct = pct;
+        filterState[cardId].months = months;
+        filterState[cardId].items = filtered;
+        filterState[cardId].page = 1;
+
+        renderFilterPage(card);
+
+        // Auto close panel after apply
+        if(panel){
+          panel.classList.add("is-collapsed");
+        }
+        if(openbar){
+          openbar.hidden = false;
+        }
+      });
+    }
+
+    // Open filter panel
+    if(btnOpen){
+      btnOpen.addEventListener("click", ()=>{
+        if(panel) panel.classList.remove("is-collapsed");
+        if(openbar) openbar.hidden = true;
+      });
+    }
+
+    // Close when click outside (only for this card filter slide)
+    document.addEventListener("click", (e)=>{
+      const filterSlide = card.querySelector('.card-slide[data-slide="filter"]');
+      if(!filterSlide) return;
+      if(!filterSlide.classList.contains("active")) return;
+
+      // If panel already collapsed, nothing
+      if(panel && panel.classList.contains("is-collapsed")) return;
+
+      // Click inside panel or on open button should not close
+      if(panel && panel.contains(e.target)) return;
+      if(btnOpen && btnOpen.contains(e.target)) return;
+      if(btnApply && btnApply.contains(e.target)) return;
+
+      // Click on any of the tab buttons inside header should not immediately close
+      const tb = e.target.closest(".tab-btn");
+      if(tb && card.contains(tb)) return;
+
+      // Outside click => close
+      if(panel){
+        panel.classList.add("is-collapsed");
+      }
+      if(openbar){
+        openbar.hidden = false;
+      }
+    });
+
+    // Pager buttons
+    const pager = card.querySelector(".pager");
+    const btnFirst = card.querySelector(".btn-first");
+    const btnPrev  = card.querySelector(".btn-prev");
+    const btnNext  = card.querySelector(".btn-next");
+    const btnLast  = card.querySelector(".btn-last");
+
+    // Scroll untuk pindah halaman
+    const filterTable = card.querySelector(".full-table");
+
+    if (filterTable) {
+      filterTable.addEventListener("wheel", (e) => {
+        if (e.deltaY > 0) {
+          gotoPage(filterState[cardId].page + 1); // scroll bawah → next
+        } else {
+          gotoPage(filterState[cardId].page - 1); // scroll atas → prev
+        }
+      });
+    }
+
+    // Keyboard panah kiri kanan
+    document.addEventListener("keydown", (e) => {
+      const filterSlide = card.querySelector('.card-slide[data-slide="filter"]');
+      if (!filterSlide || !filterSlide.classList.contains("active")) return;
+
+      if (e.key === "ArrowRight") {
+        gotoPage(filterState[cardId].page + 1);
+      }
+
+      if (e.key === "ArrowLeft") {
+        gotoPage(filterState[cardId].page - 1);
+      }
+    });
+
+    function gotoPage(p){
+      const st = filterState[cardId];
+      const totalPages = Math.max(1, Math.ceil((st.items || []).length / FILTER_PAGE_SIZE));
+      st.page = Math.max(1, Math.min(totalPages, p));
+      renderFilterPage(card);
+    }
+
+    if(btnFirst) btnFirst.addEventListener("click", ()=>gotoPage(1));
+    if(btnPrev)  btnPrev.addEventListener("click", ()=>gotoPage(filterState[cardId].page - 1));
+    if(btnNext)  btnNext.addEventListener("click", ()=>gotoPage(filterState[cardId].page + 1));
+    if(btnLast)  btnLast.addEventListener("click", ()=>{
+      const st = filterState[cardId];
+      const totalPages = Math.max(1, Math.ceil((st.items || []).length / FILTER_PAGE_SIZE));
+      gotoPage(totalPages);
+    });
+
+    function renderFilterPage(cardEl){
+      const cid = cardEl.getAttribute("data-card-id") || (cardEl.dataset.entity + "-" + cardEl.dataset.which);
+      const st = filterState[cid];
+      const entity = cardEl.dataset.entity;
+      const tbl = cardEl.querySelector(".full-table");
+      const pagerEl = cardEl.querySelector(".pager");
+      const nowEl = cardEl.querySelector(".pg-now");
+      const totEl = cardEl.querySelector(".pg-total");
+
+      if(!tbl) return;
+
+      const items = st.items || [];
+      const totalPages = Math.max(1, Math.ceil(items.length / FILTER_PAGE_SIZE));
+      const page = Math.max(1, Math.min(totalPages, st.page || 1));
+      st.page = page;
+
+      const start = (page - 1) * FILTER_PAGE_SIZE;
+      const slice = items.slice(start, start + FILTER_PAGE_SIZE);
+
+      if(!slice.length){
+        tbl.innerHTML = `<tr><td style="padding:10px;opacity:.7;">Tidak ada data sesuai filter.</td></tr>`;
+      } else {
+        let h = `<tr><th>#</th><th>Nama</th><th>Partisipasi</th><th>Persentase</th></tr>`;
+        slice.forEach((a, idx)=>{
+          const pct = Math.round((a.rate || 0) * 100);
+          const rowNo = start + idx + 1;
+          h += `
+            <tr class="click-row" onclick="goRekap('${entity}','${a.nama}')">
+              <td class="center">${rowNo}</td>
+              <td><strong>${a.nama}</strong></td>
+              <td class="center">${a.hadir} dari ${a.total}</td>
+              <td>
+                <div class="progress-wrap">
+                  <div class="progress">
+                    <div class="${(pct>=75)?'good-bar':'bad-bar'}" style="width:${pct}%"></div>
+                  </div>
+                  <span class="percent">${pct}%</span>
+                </div>
+              </td>
+            </tr>
+          `;
+        });
+        tbl.innerHTML = h;
+      }
+
+      if(pagerEl){
+        pagerEl.hidden = (items.length <= FILTER_PAGE_SIZE);
+      }
+      if(nowEl) nowEl.textContent = String(page);
+      if(totEl) totEl.textContent = String(totalPages);
+
+      // Enable/disable
+      if(btnFirst) btnFirst.disabled = (page <= 1);
+      if(btnPrev)  btnPrev.disabled  = (page <= 1);
+      if(btnNext)  btnNext.disabled  = (page >= totalPages);
+      if(btnLast)  btnLast.disabled  = (page >= totalPages);
+    }
+
+    // Expose method inside closure for apply handler
+    card.__renderFilterPage__ = ()=>renderFilterPage(card);
+    window.__renderFilterPage__ = window.__renderFilterPage__ || {};
+    window.__renderFilterPage__[cardId] = card.__renderFilterPage__;
+  });
+
+  // Tab switching: summary/filter per card
+  document.addEventListener("click", (e)=>{
+    const btn = e.target.closest(".tab-btn");
+    if(!btn) return;
+
+    const card = btn.closest(".data-card");
+    if(!card) return;
+
+    const tab = btn.dataset.tab;
+
+    card.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    card.querySelectorAll(".card-slide").forEach(s=>{
+      s.classList.toggle("active", s.dataset.slide === tab);
+    });
+  });
+
+  // Helper: render page after apply
+  function renderFilterPage(card){
+    const cid = card.getAttribute("data-card-id") || (card.dataset.entity + "-" + card.dataset.which);
+    if(window.__renderFilterPage__ && window.__renderFilterPage__[cid]){
+      window.__renderFilterPage__[cid]();
+    }
+  }
+
+});
+</script>
+
+<script src="assets/auth.js"></script>
+  </main>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+</script>
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item active">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="list-form.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
+    <span>Form</span>
+  </a>
+  <a href="rekap.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Rekap</span>
+  </a>
+  <a href="lapor.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Lapor</span>
+  </a>
+  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin</span>
+  </a>
+  <a href="profile.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>
 </body>
 </html>

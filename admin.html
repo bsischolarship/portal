@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel | BSI Scholarship Inspirasi</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    body[data-page="admin"] { background: #f5f7fb; }
+
+    .admin-page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 20px 80px;
+    }
+
+    /* PAGE HEADER */
+    .admin-ph {
+      margin-bottom: 24px;
+    }
+    .admin-ph h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+      margin: 0 0 4px;
+    }
+    .admin-ph p {
+      font-size: 13px;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* STATS ROW */
+    .admin-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-icon svg { width: 22px; height: 22px; }
+
+    .stat-icon--pending { background: #fef9c3; color: #d97706; }
+    .stat-icon--active  { background: #dcfce7; color: #16a34a; }
+    .stat-icon--total   { background: #dbeafe; color: #1d4ed8; }
+
+    .stat-info { min-width: 0; }
+    .stat-val  { font-size: 28px; font-weight: 700; color: #111827; line-height: 1; }
+    .stat-lbl  { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+    /* TABS */
+    .admin-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    .admin-tab {
+      padding: 10px 20px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #6b7280;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+
+    .admin-tab.active {
+      color: #0055a5;
+      border-bottom-color: #0055a5;
+    }
+
+    .tab-count {
+      background: #e0e7ff;
+      color: #3730a3;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 20px;
+    }
+
+    .tab-count--orange { background: #fef9c3; color: #92400e; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* CARD WRAPPER */
+    .admin-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    /* TOOLBAR */
+    .admin-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid #f3f4f6;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .admin-toolbar-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .admin-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: #374151;
+      width: 220px;
+    }
+
+    .admin-search input {
+      background: none;
+      border: none;
+      outline: none;
+      font-size: 13px;
+      color: #374151;
+      width: 100%;
+    }
+
+    .admin-search svg { flex-shrink: 0; color: #9ca3af; }
+
+    /* TABLE */
+    .admin-table-wrap { overflow-x: auto; }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .admin-table th {
+      background: #f9fafb;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+    }
+
+    .admin-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      vertical-align: middle;
+      color: #374151;
+    }
+
+    .admin-table tbody tr:last-child td { border-bottom: none; }
+    .admin-table tbody tr:hover td { background: #f9fafb; }
+
+    /* AVATAR */
+    .user-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1f3c88, #00a79d);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .user-name { font-weight: 600; color: #111827; font-size: 13px; }
+    .user-email { font-size: 11.5px; color: #6b7280; }
+
+    /* BADGES */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-pending  { background: #fef9c3; color: #92400e; }
+    .badge-approved { background: #dcfce7; color: #15803d; }
+    .badge-admin    { background: #ede9fe; color: #6d28d9; }
+
+    /* ACTION BUTTONS */
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all .15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-sm svg { width: 12px; height: 12px; }
+
+    .btn-approve { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+    .btn-approve:hover { background: #bbf7d0; }
+
+    .btn-reject  { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+    .btn-reject:hover { background: #fecaca; }
+
+    .btn-admin   { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
+    .btn-admin:hover { background: #ddd6fe; }
+
+    .btn-revoke  { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
+    .btn-revoke:hover { background: #e5e7eb; color: #374151; }
+
+    .action-wrap { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 56px 20px;
+      color: #9ca3af;
+    }
+
+    .empty-state svg {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 14px;
+      opacity: .35;
+    }
+
+    .empty-state p { font-size: 14px; margin: 0 0 4px; color: #6b7280; }
+    .empty-state small { font-size: 12px; color: #9ca3af; }
+
+    /* TOAST */
+    #adminToast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.12);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all .25s ease;
+      pointer-events: none;
+    }
+
+    #adminToast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    #adminToast.toast-ok  { background: #fff; border-left: 4px solid #16a34a; color: #111827; }
+    #adminToast.toast-err { background: #fff; border-left: 4px solid #dc2626; color: #111827; }
+
+    /* MOBILE */
+    @media (max-width: 640px) {
+      .admin-stats { grid-template-columns: 1fr 1fr; }
+      .admin-stats .stat-card:last-child { grid-column: span 2; }
+
+      .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+      .admin-search { width: 100%; }
+
+      .admin-toolbar { flex-direction: column; align-items: stretch; }
+    }
+
+    @media (max-width: 480px) {
+      .admin-stats { grid-template-columns: 1fr; }
+      .admin-stats .stat-card:last-child { grid-column: span 1; }
+    }
+  </style>
+</head>
+
+<body data-page="admin" data-page="admin">
+
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/logo.png" alt="BSI">
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-title">BSI Scholarship Inspirasi</div>
+      <span class="sidebar-brand-sub">Batch 5</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+      <a href="index.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+        Home
+      </a>
+      <a href="list-form.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/></svg>
+        List Form
+      </a>
+      <a href="rekap.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h4v8H3v-8zm7-6h4v14h-4V7zm7-4h4v18h-4V3z"/></svg>
+        Rekap Aktivitas
+      </a>
+      <a href="lapor.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Lapor
+      </a>
+    <a href="admin.html" id="navAdminLink" class="sidebar-link active" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1l3.09 6.26L22 8.27l-5 4.87 1.18 6.88L12 16.9l-6.18 3.12L7 13.14 2 8.27l6.91-1.01L12 1z"/></svg>
+      Admin
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
+      <span class="sidebar-user-avatar" id="sidebarAvatar">?</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarEmail">Memuat...</div>
+        <div class="sidebar-user-role" id="sidebarRole">BSI Scholarship</div>
+      </div>
+    </a>
+    <button class="sidebar-logout" onclick="authLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar dari Akun
+    </button>
+  </div>
+</aside>
+<div class="app-main">
+
+<header class="app-header">
+  <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="app-header-title">Panel Admin</div>
+    <div class="app-header-right">
+    <div class="header-user-info" id="headerUserInfo">
+      <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+      <span class="header-role-badge" id="headerRoleBadge">Awardee</span>
+    </div>
+    <a href="profile.html" class="header-avatar-btn" id="navUserBtn">
+      <span class="header-avatar" id="headerAvatar">?</span>
+    </a>
+  </div>
+</header>
+  <main class="app-content">
+<div class="admin-page">
+
+  <div class="admin-ph">
+    <h1>Panel Admin</h1>
+    <p>Kelola akun dan persetujuan pengguna BSI Scholarship Inspirasi</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="admin-stats">
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--pending">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val" id="statPending">—</div>
+        <div class="stat-lbl">Menunggu Persetujuan</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val" id="statActive">—</div>
+        <div class="stat-lbl">Pengguna Aktif</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-icon--total">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val" id="statTotal">—</div>
+        <div class="stat-lbl">Total Pengguna</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="admin-tabs">
+    <button class="admin-tab active" id="tab-btn-pending" onclick="switchTab('pending', this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Menunggu Approval
+      <span class="tab-count tab-count--orange" id="tabCountPending" style="display:none"></span>
+    </button>
+    <button class="admin-tab" id="tab-btn-all" onclick="switchTab('all', this)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Semua Pengguna
+      <span class="tab-count" id="tabCountAll" style="display:none"></span>
+    </button>
+  </div>
+
+  <!-- TAB PENDING -->
+  <div class="tab-panel active" id="tab-pending">
+    <div class="admin-card">
+      <div class="admin-toolbar">
+        <span class="admin-toolbar-title">Akun Menunggu Persetujuan</span>
+        <div class="admin-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Cari nama atau email..." oninput="filterTable('pending', this.value)" />
+        </div>
+      </div>
+      <div class="admin-table-wrap" id="pendingTableWrap">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <p>Memuat data...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB ALL -->
+  <div class="tab-panel" id="tab-all">
+    <div class="admin-card">
+      <div class="admin-toolbar">
+        <span class="admin-toolbar-title">Semua Pengguna Terdaftar</span>
+        <div class="admin-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Cari nama atau email..." oninput="filterTable('all', this.value)" />
+        </div>
+      </div>
+      <div class="admin-table-wrap" id="allTableWrap">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <p>Memuat data...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="adminToast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/main.js"></script>
+<script>
+(async () => {
+  await new Promise(r => setTimeout(r, 80));
+
+  const sb = window._supabase;
+  if (!sb) { location.replace("login.html"); return; }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { location.replace("login.html"); return; }
+
+  const { data: prof } = await sb.from("profiles").select("role, approved").eq("id", session.user.id).single();
+  if (!prof || prof.role !== "admin") { location.replace("index.html"); return; }
+
+  let allUsers = [];
+  const myId = session.user.id;
+
+  /* ---- LOAD ---- */
+  async function loadUsers() {
+    const { data, error } = await sb.from("profiles")
+      .select("id, email, full_name, role, approved, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) { toast("Gagal memuat: " + error.message, "err"); return; }
+    allUsers = data || [];
+    renderStats();
+    renderPending(allUsers.filter(u => !u.approved));
+    renderAll(allUsers);
+  }
+
+  /* ---- STATS ---- */
+  function renderStats() {
+    const pending = allUsers.filter(u => !u.approved).length;
+    const active  = allUsers.filter(u =>  u.approved).length;
+    document.getElementById("statPending").textContent = pending;
+    document.getElementById("statActive").textContent  = active;
+    document.getElementById("statTotal").textContent   = allUsers.length;
+
+    const cp = document.getElementById("tabCountPending");
+    const ca = document.getElementById("tabCountAll");
+    if (pending > 0) { cp.textContent = pending; cp.style.display = "inline"; }
+    else cp.style.display = "none";
+    ca.textContent = allUsers.length; ca.style.display = "inline";
+  }
+
+  /* ---- RENDER TABLE ---- */
+  function renderPending(rows) { renderTable("pendingTableWrap", rows, true); }
+  function renderAll(rows)     { renderTable("allTableWrap", rows, false); }
+
+  function renderTable(wrapId, rows, isPending) {
+    const wrap = document.getElementById(wrapId);
+    if (!rows.length) {
+      wrap.innerHTML = `<div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <p>${isPending ? "Tidak ada akun yang menunggu persetujuan" : "Belum ada pengguna terdaftar"}</p>
+        ${isPending ? "<small>Semua akun sudah disetujui</small>" : ""}
+      </div>`;
+      return;
+    }
+
+    const tbody = rows.map(u => {
+      const name     = u.full_name || "";
+      const initials = (u.email || "U").slice(0, 2).toUpperCase();
+      const date     = new Date(u.created_at).toLocaleDateString("id-ID", { day:"2-digit", month:"short", year:"numeric" });
+
+      let badge;
+      if (u.role === "admin")   badge = `<span class="badge badge-admin">Admin</span>`;
+      else if (u.approved)      badge = `<span class="badge badge-approved">Aktif</span>`;
+      else                      badge = `<span class="badge badge-pending">Menunggu</span>`;
+
+      let actions = "";
+      if (!u.approved) {
+        actions = `<div class="action-wrap">
+          <button class="btn-sm btn-approve" onclick="approveUser('${u.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Setujui
+          </button>
+          <button class="btn-sm btn-reject" onclick="rejectUser('${u.id}','${u.email}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tolak
+          </button>
+        </div>`;
+      } else if (u.id !== myId) {
+        actions = `<div class="action-wrap">
+          ${u.role !== "admin" ? `<button class="btn-sm btn-admin" onclick="makeAdmin('${u.id}')">Jadikan Admin</button>` : ""}
+          ${u.role !== "admin" ? `<button class="btn-sm btn-revoke" onclick="revokeUser('${u.id}')">Nonaktifkan</button>` : ""}
+        </div>`;
+      } else {
+        actions = `<span style="color:#9ca3af;font-size:12px;">—</span>`;
+      }
+
+      return `<tr data-name="${name.toLowerCase()}" data-email="${u.email.toLowerCase()}">
+        <td>
+          <div class="user-info">
+            <span class="user-avatar">${initials}</span>
+            <div>
+              <div class="user-name">${name || "—"}</div>
+              <div class="user-email">${u.email}</div>
+            </div>
+          </div>
+        </td>
+        <td>${date}</td>
+        <td>${badge}</td>
+        <td>${actions}</td>
+      </tr>`;
+    }).join("");
+
+    wrap.innerHTML = `<table class="admin-table">
+      <thead><tr>
+        <th>Pengguna</th>
+        <th>Terdaftar</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr></thead>
+      <tbody>${tbody}</tbody>
+    </table>`;
+  }
+
+  /* ---- FILTER ---- */
+  window.filterTable = (tab, q) => {
+    const wrapId = tab === "pending" ? "pendingTableWrap" : "allTableWrap";
+    const rows = document.querySelectorAll(`#${wrapId} tbody tr`);
+    const kw = q.toLowerCase();
+    rows.forEach(r => {
+      const match = r.dataset.name.includes(kw) || r.dataset.email.includes(kw);
+      r.style.display = match ? "" : "none";
+    });
+  };
+
+  /* ---- TABS ---- */
+  window.switchTab = (tab, btn) => {
+    document.querySelectorAll(".admin-tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + tab).classList.add("active");
+  };
+
+  /* ---- ACTIONS ---- */
+  window.approveUser = async (id) => {
+    const { error } = await sb.from("profiles").update({ approved: true }).eq("id", id);
+    if (error) { toast("Gagal menyetujui: " + error.message, "err"); return; }
+    toast("Akun berhasil disetujui", "ok");
+    await loadUsers();
+  };
+
+  window.rejectUser = async (id, email) => {
+    if (!confirm(`Hapus akun ${email}?\nTindakan ini tidak dapat dibatalkan.`)) return;
+    const { error } = await sb.from("profiles").delete().eq("id", id);
+    if (error) { toast("Gagal menghapus: " + error.message, "err"); return; }
+    toast("Akun berhasil dihapus", "ok");
+    await loadUsers();
+  };
+
+  window.revokeUser = async (id) => {
+    if (!confirm("Nonaktifkan akun ini?")) return;
+    const { error } = await sb.from("profiles").update({ approved: false }).eq("id", id);
+    if (error) { toast("Gagal: " + error.message, "err"); return; }
+    toast("Akun berhasil dinonaktifkan", "ok");
+    await loadUsers();
+  };
+
+  window.makeAdmin = async (id) => {
+    if (!confirm("Jadikan pengguna ini admin?")) return;
+    const { error } = await sb.from("profiles").update({ role: "admin" }).eq("id", id);
+    if (error) { toast("Gagal: " + error.message, "err"); return; }
+    toast("Berhasil dijadikan admin", "ok");
+    await loadUsers();
+  };
+
+  /* ---- TOAST ---- */
+  let toastTimer;
+  function toast(msg, type) {
+    const el = document.getElementById("adminToast");
+    el.className = "show toast-" + type;
+    el.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${type==='ok'?'#16a34a':'#dc2626'}" stroke-width="2.5" stroke-linecap="round">
+        ${type === 'ok'
+          ? '<polyline points="20 6 9 17 4 12"/>'
+          : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
+      </svg>
+      <span>${msg}</span>`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.className = ""; }, 3500);
+  }
+
+  await loadUsers();
+})();
+</script>
+<script src="assets/auth.js"></script>
+  </main>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+</script>
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="list-form.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
+    <span>Form</span>
+  </a>
+  <a href="rekap.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Rekap</span>
+  </a>
+  <a href="lapor.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Lapor</span>
+  </a>
+  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item active" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin</span>
+  </a>
+  <a href="profile.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>
+</body>
+</html>

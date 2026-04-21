@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form | BSI Scholarship Inspirasi — Batch 5</title>
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body data-page="form" data-form-slug="pembinaan">
+
+<header class="topbar">
+    <div class="topbar-inner">
+        <a href="index.html" class="brand">
+            <img src="assets/logo.png" alt="BSI Scholarship Logo" class="brand-logo">
+            <div class="brand-text">
+                <div class="brand-title">BSI Scholarship Inspirasi</div>
+                <div class="brand-batch">Batch 5</div>
+            </div>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle menu" onclick="toggleNav()">☰</button>
+
+        <nav class="nav" id="mobileNav">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="list-form.html" class="nav-link nav-link nav-link--active">List Form</a>
+            <a href="rekap.html" class="nav-link">Rekap Aktivitas</a>
+            <a href="lapor.html" class="nav-link">Lapor</a>
+        </nav>
+        <a href="profile.html" id="navUserBtn" style="display:none;align-items:center;gap:6px;background:none;border:1px solid #e5e7eb;border-radius:999px;padding:4px 10px 4px 4px;cursor:pointer;font-size:12px;color:#374151;text-decoration:none;"></a>
+
+    </div>
+</header>
+
+<main class="page page--split">
+    <section class="split-left card card--guide">
+        <span class="hero-badge">Form Pengisian</span>
+        <h1 class="card-title card-title--big">📅 Kehadiran Pembinaan</h1>
+        <p class="card-text">
+ Ikuti langkah berikut untuk mengisi kehadiran pembinaan:
+        </p>
+        <ul class="list">
+            <li>Ketik nama lengkap kamu di kolom yang tersedia.</li>
+            <li>Klik Verifikasi Identitas dan pastikan data sudah benar.</li>
+            <li>Klik Buka Google Form & Lanjutkan.</li>
+            <li>Isi Google Form, lalu klik Kirim / Submit.</li>
+            <li>Simpan bukti submit email Google Form untuk arsip pribadi.</li>
+        </ul>
+        <div class="guide-placeholder">
+            <span class="guide-placeholder-label">YANG PERLU KAMU SIAPKAN</span>
+        <ul class="list">
+            <li>Email aktif (untuk konfirmasi dan arsip pribadi).</li>
+        </ul>
+        </div>
+    </section>
+
+    <section class="split-right card card--form-panel">
+        <!-- MOBILE TITLE (hanya muncul di mobile) -->
+        <div class="mobile-form-title">
+            <span class="hero-badge">Form Pengisian</span>
+            <h1 class="card-title card-title--big">📅 Kehadiran Pembinaan</h1>
+            <p class="card-text">
+                Presensi Kehadiran Pembinaan Awardee BSI Scholarship Inspirasi Batch 5.
+            </p>
+        </div>
+        <div class="alert alert--warning" id="form-banner">
+            <strong>Perhatian.</strong>
+            <span>
+Cukup ketik nama lengkapmu, lalu verifikasi identitas.
+Jika identitas sudah sesuai dengan dirimu, lanjutkan Buka Google Form.</span>
+        </div>
+
+        <div id="section-input">
+    <form class="nim-form" onsubmit="return handleVerification(event)">
+        <label for="nim" class="nim-label">Ketik Nama Lengkap</label>
+        <p class="nim-info">
+            Pilih nama kamu dari daftar yang muncul untuk memvalidasi identitas.
+        </p>
+
+        <div class="nim-field-wrapper">
+            <input
+                id="nim"
+                type="text"
+                class="nim-input"
+                placeholder="Contoh: Naufal Rayyan"
+                autocomplete="off"
+                required
+            />
+            <div id="nim-suggestions" class="nim-suggestion-box"></div>
+        </div>
+
+        <button type="submit" class="btn btn-success btn-full">
+            Verifikasi Identitas
+        </button>
+    </form>
+</div>
+
+
+<div id="section-validation" style="display: none;">
+    <div class="verification-header" style="text-align: center; margin-bottom: 20px;">
+        <div style="background: #e6f4f1; color: #2d5a5e; border-radius: 50%; width: 40px; height: 40px; line-height: 40px; margin: 0 auto 10px; font-weight: bold;">✓</div>
+        <h3 style="margin: 0; color: #2d5a5e;">Identitas Diverifikasi</h3>
+        <p style="font-size: 14px; color: #10b981;">✓ Siap mengisi form</p>
+    </div>
+
+    <div style="background: #f9f9f9; border: 1px solid #eee; border-radius: 12px; padding: 15px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <div id="v-initial" style="background: #d1e7dd; color: #0f5132; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px;">AP</div>
+            <div>
+                <strong id="v-nama" style="display: block; font-size: 16px;">Nama Lengkap</strong>
+                <span id="v-univ" style="font-size: 12px; color: #666;">📍 Universitas</span>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;">
+                <small style="color: #999; display: block; font-size: 10px;">Nomor Induk</small>
+                <span id="v-nim" style="font-weight: bold; font-size: 13px;">-</span>
+            </div>
+            <div style="background: white; padding: 8px; border-radius: 6px; border: 1px solid #f0f0f0;">
+                <small style="color: #999; display: block; font-size: 10px;">Kategori</small>
+                <span id="v-kategori" style="font-weight: bold; font-size: 13px;">INSPIRASI</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert--warning" style="font-size: 13px; margin-bottom: 15px;">
+        <strong>Pastikan data benar.</strong> Kesalahan tidak dapat diperbaiki.
+    </div>
+
+    <button onclick="goToGoogleForm()" class="btn btn-success btn-full">Lanjut ke Form ➔</button>
+    <button onclick="cancelVerification()" class="btn-danger btn-full">Bukan saya ✕</button>
+</div>
+        <div class="tips-box">
+            <h3 class="tips-title">Tips Penting💡</h3>
+            <ul class="list">
+                <li>Kamu akan diarahkan ke Google Form untuk mengisi kehadiran.</li>
+                <li>Di Google Form, identitas akan terisi otomatis. Tidak perlu mengisi ulang.</li>
+                <li>Jika muncul pesan “Continue current draft?”, klik tombol "Continue" lalu lanjutkan mengisi form.</li>
+                <li>Gunakan Email aktif (untuk konfirmasi dan arsip pribadi).</li>
+                <li>Jika terjadi error, coba refresh halaman.</li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-bottom-nav">
+    <a href="index.html" class="mb-item">
+        <svg viewBox="0 0 24 24" class="mb-icon">
+            <path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5z"/>
+        </svg>
+        <span class="mb-label">Home</span>
+    </a>
+
+    <a href="list-form.html" class="mb-item active">
+        <svg viewBox="0 0 24 24" class="mb-icon">
+            <path d="M4 4h16v2H4V4zm0 5h16v2H4V9zm0 5h10v2H4v-2z"/>
+        </svg>
+        <span class="mb-label">List Form</span>
+    </a>
+
+    <a href="rekap.html" class="mb-item">
+        <svg viewBox="0 0 24 24" class="mb-icon">
+            <path d="M3 13h4v8H3v-8zm7-6h4v14h-4V7zm7-4h4v18h-4V3z"/>
+        </svg>
+        <span class="mb-label">Rekap</span>
+    </a>
+
+    <a href="lapor.html" class="mb-item">
+        <svg viewBox="0 0 24 24" class="mb-icon">
+            <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 5v3h16v-3c0-3-4-5-8-5z"/>
+        </svg>
+        <span class="mb-label">Lapor</span>
+    </a>
+</nav>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <span>&copy;BSI Scholarship Inspirasi Batch 5</span>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/main.js"></script>
+<style>.nav-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#1f3c88,#00a79d);color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;}.nav-user-email{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}#navUserBtn:hover{background:#f3f4f6 !important;}</style>
+<script src="assets/auth.js"></script>
+</body>
+</html>

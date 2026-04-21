@@ -7,86 +7,9 @@
     <link rel="icon" href="assets/logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
     <link rel="stylesheet" href="assets/style.css" />
-
-    <style>
-        .card-grid {
-            gap: 18px;
-        }
-
-        .card {
-            padding: 14px 16px;
-            border-radius: 12px;
-            border-left: 5px solid #00a79d;
-            box-shadow: 0 4px 14px rgba(0,0,0,.06);
-            transition: all .2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,.10);
-        }
-
-        /* ICON + TITLE ROW */
-        .card-header {
-            display: flex;
-            align-items: flex-start; /* FIX LURUS */
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-
-        .card-icon {
-            width: 28px;
-            height: 28px;
-            flex-shrink: 0;
-            color: #00a79d;
-            margin-top: 1px;
-        }
-
-        .card-icon path {
-            fill: currentColor;
-        }
-
-        .card-title {
-            font-size: 15px;
-            line-height: 1.3;
-            margin: 2px 0 0 0; /* MICRO ALIGNMENT */
-            color: #0055a5; /* BIRU BSI */
-        }
-
-        .card-text {
-            font-size: 13px;
-            line-height: 1.45;
-            margin-bottom: 10px;
-            color: #555;
-        }
-
-        /* BUTTON */
-        .card-button {
-            display: inline-block;
-            padding: 6px 14px;
-            font-size: 12.5px;
-            font-weight: 600;
-            color: #0055a5;
-            border: 1.5px solid #0055a5;
-            border-radius: 20px;
-            text-align: center;
-            transition: all .2s ease;
-        }
-
-        .card-button:hover {
-            background: #0055a5;
-            color: #fff;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 13px 14px;
-            }
-        }
-    </style>
 </head>
 
-<body data-page="list-form" data-page="list-form">
+<body data-page="form" data-form-slug="prepost" data-page="form">
 
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -141,7 +64,7 @@
   <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-  <div class="app-header-title">List Form</div>
+  <div class="app-header-title">Pre Test & Post Test</div>
     <div class="app-header-right">
     <div class="header-user-info" id="headerUserInfo">
       <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
@@ -153,97 +76,91 @@
   </div>
 </header>
   <main class="app-content">
-
-    <section class="hero hero--compact">
-        <div class="hero-badge">Form Aktif</div>
-        <h1 class="hero-title">List Form BSI Scholarship</h1>
-        <p class="hero-subtitle">
-            Pilih form sesuai kebutuhan. Semua form menggunakan nomor induk sebagai verifikasi awal
-            dan akan meneruskan ke Google Form dengan identitas terisi otomatis.
+  <div class="page--split">
+    <section class="split-left card card--guide">
+        <span class="hero-badge">Form Pengisian</span>
+        <h1 class="card-title card-title--big">✍🏻 Pre Test & Post Test</h1>
+        <p class="card-text">
+            Perhatikan panduan singkat di bawah ini agar data
+            yang kamu kirimkan tercatat dengan benar.
         </p>
+        <ul class="list">
+            <li>Ketik nama lengkap kamu di kolom yang tersedia.</li>
+            <li>Klik Verifikasi Identitas dan pastikan data sudah benar.</li>
+            <li>Klik Buka Google Form & Lanjutkan.</li>
+            <li>Isi Google Form, lalu klik Kirim / Submit.</li>
+            <li>Simpan bukti submit email Google Form untuk arsip pribadi.</li>
+        </ul>
+        <div class="guide-placeholder">
+            <span class="guide-placeholder-label">YANG PERLU KAMU SIAPKAN</span>
+        <ul class="list">
+            <li>Email aktif (untuk konfirmasi dan arsip pribadi).</li>
+        </ul>
+        </div>
     </section>
 
-    <section class="card-grid card-grid--4">
+    <section class="split-right card card--form-panel">
+        <!-- MOBILE TITLE (hanya muncul di mobile) -->
+        <div class="mobile-form-title">
+            <span class="hero-badge">Form Pengisian</span>
+            <h1 class="card-title card-title--big">✍🏻 Pre Test & Post Test</h1>
+            <p class="card-text">
+                Pre Test & Post Test Pembinaan Awardee BSI Scholarship Inspirasi Batch 5.
+            </p>
+        </div>
+        <div class="alert alert--warning" id="form-banner">
+            <strong>Perhatian.</strong>
+            <span>Cukup ketik nama lengkapmu, lalu verifikasi identitas.
+Jika identitas sudah sesuai dengan dirimu, lanjutkan Buka Google Form.</span>
+        </div>
 
-        <!-- PEMBINAAN -->
-        <a href="feedback-pembinaan.html" class="card card--action">
-            <div class="card-header">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M9 16.2l-3.5-3.5L4 14.2 9 19l11-11-1.5-1.5z"/>
-                </svg>
-                <h2 class="card-title">Feedback Pembinaan</h2>
+
+        <form class="nim-form" onsubmit="return handleFormSubmit(event)">
+            <label for="nim" class="nim-label">Ketik Nama Lengkap</label>
+            <p class="nim-info">
+                Nomor induk akan muncul otomatis setelah kamu mengetik nama.
+            </p>
+
+            <!-- === INPUT + AUTOCOMPLETE === -->
+            <div class="nim-field-wrapper">
+                <input
+                    id="nim"
+                    name="nim"
+                    type="text"
+                    class="nim-input"
+                    placeholder="Contoh: Budi Santoso"
+                    autocomplete="off"
+                    required
+                />
+                <div id="nim-suggestions" class="nim-suggestion-box"></div>
             </div>
-            <p class="card-text">Beri masukan & saran untuk pembinaan.</p>
-            <span class="card-button">Isi Form</span>
-        </a>
 
-        <!-- MENTORING -->
-        <a href="form-mentoring.html" class="card card--action">
-            <div class="card-header">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M7 2v2H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm12 7H5v10h14V9z"/>
-                </svg>
-                <h2 class="card-title">Kehadiran Mentoring</h2>
-            </div>
-            <p class="card-text">Presensi untuk kehadiran mentoring.</p>
-            <span class="card-button">Isi Form</span>
-        </a>
+            <p class="nim-hint">
+                Pilih nama kamu dari daftar yang muncul. Lalu klik "Verifikasi Identitas"
+            </p>
 
-        <!-- TUGAS PENGGANTI PEMBINAAN & MENTORING -->
-        <a href="form-tugas-pengganti.html" class="card card--action">
-            <div class="card-header">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5"/>
-                </svg>
-                <h2 class="card-title">Tugas Pengganti Pembinaan & Mentoring</h2>
-            </div>
-            <p class="card-text">Tugas untuk memenuhi ketidakhadiranmu.</p>
-            <span class="card-button">Isi Form</span>
-        </a>
+            <button type="submit" class="btn btn-success btn-full">
+    Verifikasi identitas
+</button>
+        </form>
 
-        
-        <!-- TUGAS PENGGANTI Kelas Al-Quran -->
-        <a href="form-tp-alquran.html" class="card card--action">
-            <div class="card-header">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5"/>
-                </svg>
-                <h2 class="card-title">Tugas Pengganti Kelas Al-Quran</h2>
-            </div>
-            <p class="card-text">Tugas untuk Kelas Al-Quran yang tidak kamu hadiri.</p>
-            <span class="card-button">Isi Form</span>
-        </a>
+        <div id="cek-result" class="cek-result"></div>
 
-        
-         <!-- PRE TEST & POST TEST -->
-        <a href="form-prepost.html" class="card card--action">
-            <div class="card-header">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M9 16.2l-3.5-3.5L4 14.2 9 19l11-11-1.5-1.5z"/>
-                </svg>
-                <h2 class="card-title">Pre Test & Post Test</h2>
-            </div>
-            <p class="card-text">Penilaian pemahaman materi sebelum dan setelah pembinaan.</p>
-            <span class="card-button">Isi Form</span>
-        </a>
-
-        <!-- SELF-ASSESSMENT -->
-        <a href="form-self-assessment.html" class="card card--action">
-            <div class="card-header">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M9 16.2l-3.5-3.5L4 14.2 9 19l11-11-1.5-1.5z"/>
-                </svg>
-                <h2 class="card-title">Self-Assessmennt</h2>
-            </div>
-            <p class="card-text">Penilaian diri kompetensi program</p>
-            <span class="card-button">Isi Form</span>
-        </a>
-        
-        
-
+        <div class="tips-box">
+            <h3 class="tips-title">Tips Penting💡</h3>
+            <ul class="list">
+                <li>Kamu akan diarahkan ke Google Form untuk mengisi test.</li>
+                <li>Di Google Form, identitas akan terisi otomatis. Tidak perlu mengisi ulang.</li>
+                <li>Jika muncul pesan “Continue current draft?”, klik tombol "Continue" lalu lanjutkan mengisi form.</li>
+                <li>Gunakan Email aktif (untuk konfirmasi dan arsip pribadi).</li>
+                <li>Jika terjadi error, coba refresh halaman.</li>
+            </ul>
+        </div>
     </section>
+  </div>
 </main>
 
+<!-- MOBILE BOTTOM NAV -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="scripts/main.js"></script>
 <script src="assets/auth.js"></script>
