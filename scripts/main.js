@@ -83,34 +83,213 @@ function setBannerMonthIfExists() {
 ========================================================= */
 
 async function initFormPage(slug) {
-    const resultEl = document.getElementById("cek-result");
+    setBannerMonthIfExists();
 
+    // Cek session langsung via supabaseClient (sudah tersedia di main.js)
+    let session = null;
     try {
+        const { data } = await supabaseClient.auth.getSession();
+        session = data.session;
+    } catch (_) {}
+
+    if (!session || !session.user) {
+        // Belum login — tampilkan form input manual
         await ensureDataLoaded();
-    } catch (err) {
-        console.error(err);
-        if (resultEl) {
-            resultEl.innerHTML = `
-                <div class="error-box">
-                    Terjadi kesalahan saat memuat data awal.
-                    Silakan refresh halaman atau hubungi admin.
-                </div>
-            `;
-        }
+        _showFormInput();
         return;
     }
 
-    setBannerMonthIfExists();
+    const email = session.user.email;
 
-    if (!formsConfig || !formsConfig[slug]) {
-        if (resultEl) {
-            resultEl.innerHTML = `
-                <div class="error-box">
-                    Konfigurasi form untuk halaman ini belum tersedia.
-                </div>
-            `;
-        }
+    // Query data awardee berdasarkan email
+    let mhs = null;
+    try {
+        const { data } = await supabaseClient
+            .from('mahasiswa_bsi')
+            .select('no_induk, nama, kampus, kelompok')
+            .ilike('email', email)
+            .maybeSingle();
+        mhs = data;
+    } catch (_) {}
+
+    if (!mhs) {
+        // Email tidak ada di mahasiswa_bsi (admin / tamu) — form manual
+        await ensureDataLoaded();
+        _showFormInput();
+        return;
     }
+
+    const found = {
+        nim:      String(mhs.no_induk || '').trim(),
+        nama:     mhs.nama     || '',
+        kampus:   mhs.kampus   || '',
+        kelompok: mhs.kelompok || '',
+    };
+
+    const banner = document.getElementById('form-banner');
+    if (banner) banner.style.display = 'none';
+
+    showVerificationCard(found, slug);
+}
+
+function _showFormInput() {
+    [
+        document.getElementById('section-input'),
+        document.querySelector('.nim-form'),
+        document.getElementById('form-banner'),
+    ].forEach(el => {
+        if (!el) return;
+        el.style.cssText = 'visibility:visible;opacity:0;pointer-events:auto;transition:opacity .3s ease';
+        requestAnimationFrame(() => requestAnimationFrame(() => { el.style.opacity = '1'; }));
+    });
+}
+
+/* ── Tampilkan kartu verifikasi & tombol buka form ── */
+function showVerificationCard(found, slug) {
+    // Sembunyikan semua form input
+    const sectionInput = document.getElementById('section-input');
+    const nimForm      = document.querySelector('.nim-form');
+    if (sectionInput) sectionInput.style.display = 'none';
+    if (nimForm)      nimForm.style.display       = 'none';
+
+    const cfg = formsConfig && formsConfig[slug];
+    if (!cfg || !cfg.form_url) return;
+
+    const params = new URLSearchParams();
+    if (cfg.prefill && cfg.prefill.nim)      params.set(cfg.prefill.nim,      found.nim);
+    if (cfg.prefill && cfg.prefill.nama)     params.set(cfg.prefill.nama,     found.nama);
+    if (cfg.prefill && cfg.prefill.kampus)   params.set(cfg.prefill.kampus,   found.kampus);
+    if (cfg.prefill && cfg.prefill.kelompok) params.set(cfg.prefill.kelompok, found.kelompok);
+    const finalUrl = cfg.form_url.includes('?')
+        ? `${cfg.form_url}&${params.toString()}`
+        : `${cfg.form_url}?${params.toString()}`;
+
+    window._formFinalUrl = finalUrl;
+
+    const initials = (found.nama || '??').slice(0, 2).toUpperCase();
+    const cardHtml = `
+        <div class="form-card-reveal" style="background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:18px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                <div style="width:44px;height:44px;border-radius:50%;background:#00A59F;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:#111827;">${found.nama || '—'}</div>
+                    <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;margin-top:2px;">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        ${found.kampus || '—'}
+                    </div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+                <div style="background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #e5e7eb;">
+                    <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:2px;">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+                        Nomor Induk
+                    </div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;font-family:monospace;">${found.nim || '—'}</div>
+                </div>
+                <div style="background:#fff;padding:8px 12px;border-radius:10px;border:1px solid #e5e7eb;">
+                    <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:#9ca3af;font-weight:600;text-transform:uppercase;margin-bottom:2px;">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Kelompok
+                    </div>
+                    <div style="font-size:13px;font-weight:700;color:#111827;">${found.kelompok || '—'}</div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <button onclick="openInlineForm()" id="btn-open-form"
+                   style="display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 8px;background:#00A59F;color:#fff;border-radius:12px;font-size:13px;font-weight:700;border:none;cursor:pointer;box-sizing:border-box;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
+                    Buka di Sini
+                </button>
+                <a href="${finalUrl}" target="_blank" rel="noopener"
+                   style="display:flex;align-items:center;justify-content:center;gap:7px;padding:12px 8px;background:#fff;color:#00A59F;border:1.5px solid #00A59F;border-radius:12px;font-size:13px;font-weight:700;text-decoration:none;box-sizing:border-box;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Tab Baru
+                </a>
+            </div>
+        </div>
+        <div id="inline-form-wrap" style="max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .4s ease;opacity:0;">
+            <div style="border-radius:14px;overflow:hidden;border:1.5px solid #86efac;margin-top:8px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f0fdf4;border-bottom:1px solid #86efac;">
+                    <span style="font-size:12px;font-weight:600;color:#059669;">Google Form</span>
+                    <button onclick="closeInlineForm()" style="background:none;border:none;cursor:pointer;color:#6b7280;display:flex;align-items:center;padding:2px;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <iframe id="inline-gform" src="" style="width:100%;height:680px;border:none;display:block;" loading="lazy" allow="autoplay"></iframe>
+            </div>
+        </div>`;
+
+    // Render ke #cek-result jika ada, otherwise ke section-validation lama
+    const cekResult = document.getElementById('cek-result');
+    const sectionVal = document.getElementById('section-validation');
+
+    if (cekResult) {
+        cekResult.innerHTML = cardHtml;
+    } else if (sectionVal) {
+        sectionVal.innerHTML = cardHtml;
+        sectionVal.style.display = 'block';
+    }
+}
+
+function openInlineForm() {
+    const wrap = document.getElementById('inline-form-wrap');
+    const iframe = document.getElementById('inline-gform');
+    const btn = document.getElementById('btn-open-form');
+    if (!wrap || !iframe) return;
+    if (!iframe.src || iframe.src === window.location.href) {
+        iframe.src = window._formFinalUrl || '';
+    }
+    wrap.style.maxHeight = '760px';
+    wrap.style.opacity = '1';
+    if (btn) btn.style.display = 'none';
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeInlineForm() {
+    const wrap = document.getElementById('inline-form-wrap');
+    const btn = document.getElementById('btn-open-form');
+    if (!wrap) return;
+    wrap.style.maxHeight = '0';
+    wrap.style.opacity = '0';
+    if (btn) btn.style.display = 'flex';
+}
+
+function goToGoogleForm() {
+    if (window._formFinalUrl) window.open(window._formFinalUrl, '_blank');
+}
+
+function cancelVerification() {
+    const cekResult  = document.getElementById('cek-result');
+    const sectionVal = document.getElementById('section-validation');
+    const sectionInput = document.getElementById('section-input');
+    const nimForm    = document.querySelector('.nim-form');
+    if (cekResult)  cekResult.innerHTML = '';
+    if (sectionVal) sectionVal.style.display = 'none';
+    if (sectionInput) sectionInput.style.display = 'block';
+    if (nimForm)    nimForm.style.display = 'block';
+}
+
+/* ── Untuk form manual (fallback non-login) ── */
+async function handleVerification(event) {
+    event.preventDefault();
+    const slug     = document.body.dataset.formSlug;
+    const nimInput = document.getElementById('nim');
+    if (!nimInput) return false;
+    const query = (nimInput.value || '').trim();
+    if (!query) return false;
+
+    await ensureDataLoaded();
+    const found = mahasiswaData.find(m =>
+        m.nim.toLowerCase() === query.toLowerCase() ||
+        m.nama.toLowerCase().includes(query.toLowerCase())
+    );
+    if (!found) {
+        alert('Data tidak ditemukan. Coba nama atau NIM yang lebih spesifik.');
+        return false;
+    }
+    showVerificationCard(found, slug);
+    return false;
 }
 
 /* =========================================================
