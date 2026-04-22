@@ -79,8 +79,11 @@ function _saveCache(email, name, role, nis = "", kampus = "") {
 }
 
 function _renderUI(email, name, role, nis = "", kampus = "") {
-  const initials = email ? email.slice(0, 2).toUpperCase() : "?";
   const displayName = name || email.split("@")[0];
+  const nameParts = displayName.trim().split(/\s+/);
+  const initials = nameParts.length >= 2
+    ? (nameParts[0][0] + nameParts[nameParts.length - 1][0]).toUpperCase()
+    : displayName.slice(0, 2).toUpperCase();
 
   // Header
   const hAvatar   = document.getElementById("headerAvatar");
