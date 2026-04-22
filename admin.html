@@ -34,7 +34,7 @@
     /* STATS ROW */
     .admin-stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 14px;
       margin-bottom: 24px;
     }
@@ -63,6 +63,7 @@
 
     .stat-icon--pending { background: #fef9c3; color: #d97706; }
     .stat-icon--active  { background: #dcfce7; color: #16a34a; }
+    .stat-icon--admin   { background: #ede9fe; color: #6d28d9; }
     .stat-icon--total   { background: #dbeafe; color: #1d4ed8; }
 
     .stat-info { min-width: 0; }
@@ -304,10 +305,31 @@
     #adminToast.toast-ok  { background: #fff; border-left: 4px solid #16a34a; color: #111827; }
     #adminToast.toast-err { background: #fff; border-left: 4px solid #dc2626; color: #111827; }
 
+    /* FILTER BAR */
+    .admin-filters {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 6px 10px;
+      font-size: 12.5px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: #f9fafb;
+      color: #374151;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .filter-select:focus { border-color: #0055a5; }
+
     /* MOBILE */
     @media (max-width: 640px) {
       .admin-stats { grid-template-columns: 1fr 1fr; }
-      .admin-stats .stat-card:last-child { grid-column: span 2; }
+      .admin-stats .stat-card:last-child { grid-column: unset; }
 
       .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
@@ -317,8 +339,7 @@
     }
 
     @media (max-width: 480px) {
-      .admin-stats { grid-template-columns: 1fr; }
-      .admin-stats .stat-card:last-child { grid-column: span 1; }
+      .admin-stats { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -346,7 +367,7 @@
         List Form
       </a>
       <a href="rekap.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Aktivitas
       </a>
       <a href="lapor.html" class="sidebar-link">
@@ -447,6 +468,18 @@
     </div>
 
     <div class="stat-card">
+      <div class="stat-icon stat-icon--admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="stat-info">
+        <div class="stat-val" id="statAdmin">—</div>
+        <div class="stat-lbl">Administrator</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
       <div class="stat-icon stat-icon--total">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
@@ -498,9 +531,24 @@
     <div class="admin-card">
       <div class="admin-toolbar">
         <span class="admin-toolbar-title">Semua Pengguna Terdaftar</span>
-        <div class="admin-search">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Cari nama atau email..." oninput="filterTable('all', this.value)" />
+        <div class="admin-filters">
+          <select class="filter-select" id="filterRole" onchange="applyFilters()">
+            <option value="">Semua Role</option>
+            <option value="awardee">Awardee</option>
+            <option value="admin">Admin</option>
+          </select>
+          <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+            <option value="">Semua Status</option>
+            <option value="approved">Aktif</option>
+            <option value="pending">Menunggu</option>
+          </select>
+          <select class="filter-select" id="filterKampus" onchange="applyFilters()">
+            <option value="">Semua Kampus</option>
+          </select>
+          <div class="admin-search">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchAll" placeholder="Cari nama / email / NIM..." oninput="applyFilters()" />
+          </div>
         </div>
       </div>
       <div class="admin-table-wrap" id="allTableWrap">
@@ -537,35 +585,86 @@
 
   /* ---- LOAD ---- */
   async function loadUsers() {
-    const { data, error } = await sb.from("profiles")
-      .select("id, email, full_name, role, approved, created_at")
-      .order("created_at", { ascending: false });
+    // paginate profiles (bypass 1000-row limit)
+    let profiles = [];
+    let from = 0;
+    while (true) {
+      const { data, error } = await sb.from("profiles")
+        .select("id, email, full_name, role, approved, created_at")
+        .order("created_at", { ascending: false })
+        .range(from, from + 999);
+      if (error) { toast("Gagal memuat profil: " + error.message, "err"); return; }
+      profiles = profiles.concat(data || []);
+      if (!data || data.length < 1000) break;
+      from += 1000;
+    }
 
-    if (error) { toast("Gagal memuat: " + error.message, "err"); return; }
-    allUsers = data || [];
+    // paginate mahasiswa_bsi for NIM/kampus/kelompok/fakultas by email
+    const mhsMap = {};
+    let mFrom = 0;
+    while (true) {
+      const { data: mData } = await sb.from("mahasiswa_bsi")
+        .select("email, no_induk, kampus, kelompok, fakultas")
+        .range(mFrom, mFrom + 999);
+      if (!mData || mData.length === 0) break;
+      mData.forEach(m => { if (m.email) mhsMap[m.email.trim().toLowerCase()] = m; });
+      if (mData.length < 1000) break;
+      mFrom += 1000;
+    }
+
+    allUsers = profiles.map(u => ({
+      ...u,
+      mhs: mhsMap[(u.email || "").trim().toLowerCase()] || null
+    }));
+
     renderStats();
-    renderPending(allUsers.filter(u => !u.approved));
+    renderPending(allUsers.filter(u => !u.approved && u.role !== "admin"));
+    populateKampusFilter();
     renderAll(allUsers);
   }
 
   /* ---- STATS ---- */
   function renderStats() {
-    const pending = allUsers.filter(u => !u.approved).length;
-    const active  = allUsers.filter(u =>  u.approved).length;
-    document.getElementById("statPending").textContent = pending;
-    document.getElementById("statActive").textContent  = active;
-    document.getElementById("statTotal").textContent   = allUsers.length;
+    const pending = allUsers.filter(u => !u.approved && u.role !== "admin").length;
+    const active  = allUsers.filter(u => u.approved && u.role !== "admin").length;
+    const adminCount = allUsers.filter(u => u.role === "admin").length;
+    document.getElementById("statPending").textContent = pending.toLocaleString("id-ID");
+    document.getElementById("statActive").textContent  = active.toLocaleString("id-ID");
+    document.getElementById("statAdmin").textContent   = adminCount.toLocaleString("id-ID");
+    document.getElementById("statTotal").textContent   = allUsers.length.toLocaleString("id-ID");
 
     const cp = document.getElementById("tabCountPending");
     const ca = document.getElementById("tabCountAll");
     if (pending > 0) { cp.textContent = pending; cp.style.display = "inline"; }
     else cp.style.display = "none";
-    ca.textContent = allUsers.length; ca.style.display = "inline";
+    ca.textContent = allUsers.length.toLocaleString("id-ID"); ca.style.display = "inline";
+  }
+
+  /* ---- KAMPUS FILTER ---- */
+  function populateKampusFilter() {
+    const sel = document.getElementById("filterKampus");
+    const kampusSet = new Set();
+    allUsers.forEach(u => { if (u.mhs?.kampus) kampusSet.add(u.mhs.kampus); });
+    const sorted = Array.from(kampusSet).sort();
+    sorted.forEach(k => {
+      const opt = document.createElement("option");
+      opt.value = k; opt.textContent = k;
+      sel.appendChild(opt);
+    });
   }
 
   /* ---- RENDER TABLE ---- */
   function renderPending(rows) { renderTable("pendingTableWrap", rows, true); }
   function renderAll(rows)     { renderTable("allTableWrap", rows, false); }
+
+  function mkInitials(name, email) {
+    const src = (name || "").trim();
+    if (!src) return (email || "U").slice(0, 2).toUpperCase();
+    const parts = src.split(/\s+/);
+    return parts.length >= 2
+      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+      : src.slice(0, 2).toUpperCase();
+  }
 
   function renderTable(wrapId, rows, isPending) {
     const wrap = document.getElementById(wrapId);
@@ -582,8 +681,11 @@
 
     const tbody = rows.map(u => {
       const name     = u.full_name || "";
-      const initials = (u.email || "U").slice(0, 2).toUpperCase();
+      const initials = mkInitials(name, u.email);
       const date     = new Date(u.created_at).toLocaleDateString("id-ID", { day:"2-digit", month:"short", year:"numeric" });
+      const nim      = u.mhs?.no_induk || "—";
+      const kampus   = u.mhs?.kampus   || "—";
+      const kelompok = u.mhs?.kelompok || "—";
 
       let badge;
       if (u.role === "admin")   badge = `<span class="badge badge-admin">Admin</span>`;
@@ -591,7 +693,7 @@
       else                      badge = `<span class="badge badge-pending">Menunggu</span>`;
 
       let actions = "";
-      if (!u.approved) {
+      if (!u.approved && u.role !== "admin") {
         actions = `<div class="action-wrap">
           <button class="btn-sm btn-approve" onclick="approveUser('${u.id}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Setujui
@@ -600,16 +702,22 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tolak
           </button>
         </div>`;
-      } else if (u.id !== myId) {
+      } else if (u.id !== myId && u.role !== "admin") {
         actions = `<div class="action-wrap">
-          ${u.role !== "admin" ? `<button class="btn-sm btn-admin" onclick="makeAdmin('${u.id}')">Jadikan Admin</button>` : ""}
-          ${u.role !== "admin" ? `<button class="btn-sm btn-revoke" onclick="revokeUser('${u.id}')">Nonaktifkan</button>` : ""}
+          <button class="btn-sm btn-admin" onclick="makeAdmin('${u.id}')">Jadikan Admin</button>
+          <button class="btn-sm btn-revoke" onclick="revokeUser('${u.id}')">Nonaktifkan</button>
+        </div>`;
+      } else if (u.id !== myId && u.role === "admin") {
+        actions = `<div class="action-wrap">
+          <button class="btn-sm btn-revoke" onclick="demoteAdmin('${u.id}')">Hapus Admin</button>
         </div>`;
       } else {
         actions = `<span style="color:#9ca3af;font-size:12px;">—</span>`;
       }
 
-      return `<tr data-name="${name.toLowerCase()}" data-email="${u.email.toLowerCase()}">
+      const escEmail = u.email.replace(/'/g, "\\'");
+      const escName  = name.toLowerCase().replace(/"/g, "");
+      return `<tr data-search="${escName} ${u.email.toLowerCase()} ${nim.toLowerCase()} ${kampus.toLowerCase()}">
         <td>
           <div class="user-info">
             <span class="user-avatar">${initials}</span>
@@ -619,15 +727,20 @@
             </div>
           </div>
         </td>
-        <td>${date}</td>
+        <td style="white-space:nowrap">${nim}</td>
+        <td style="white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis" title="${kampus}">${kampus}</td>
+        <td style="white-space:nowrap">${kelompok}</td>
+        <td style="white-space:nowrap">${date}</td>
         <td>${badge}</td>
         <td>${actions}</td>
       </tr>`;
     }).join("");
 
+    const colSpan = isPending ? 5 : 7;
     wrap.innerHTML = `<table class="admin-table">
       <thead><tr>
         <th>Pengguna</th>
+        ${isPending ? "" : "<th>NIM</th><th>Kampus</th><th>Kelompok</th>"}
         <th>Terdaftar</th>
         <th>Status</th>
         <th>Aksi</th>
@@ -637,13 +750,30 @@
   }
 
   /* ---- FILTER ---- */
+  window.applyFilters = () => {
+    const q       = (document.getElementById("searchAll")?.value || "").toLowerCase();
+    const role    = document.getElementById("filterRole")?.value || "";
+    const status  = document.getElementById("filterStatus")?.value || "";
+    const kampus  = document.getElementById("filterKampus")?.value || "";
+
+    let filtered = allUsers;
+    if (role === "admin")   filtered = filtered.filter(u => u.role === "admin");
+    if (role === "awardee") filtered = filtered.filter(u => u.role !== "admin");
+    if (status === "approved") filtered = filtered.filter(u => u.approved);
+    if (status === "pending")  filtered = filtered.filter(u => !u.approved && u.role !== "admin");
+    if (kampus) filtered = filtered.filter(u => u.mhs?.kampus === kampus);
+    if (q) filtered = filtered.filter(u => {
+      const s = `${u.full_name || ""} ${u.email} ${u.mhs?.no_induk || ""} ${u.mhs?.kampus || ""}`.toLowerCase();
+      return s.includes(q);
+    });
+    renderAll(filtered);
+  };
+
   window.filterTable = (tab, q) => {
-    const wrapId = tab === "pending" ? "pendingTableWrap" : "allTableWrap";
-    const rows = document.querySelectorAll(`#${wrapId} tbody tr`);
+    const rows = document.querySelectorAll(`#pendingTableWrap tbody tr`);
     const kw = q.toLowerCase();
     rows.forEach(r => {
-      const match = r.dataset.name.includes(kw) || r.dataset.email.includes(kw);
-      r.style.display = match ? "" : "none";
+      r.style.display = (r.dataset.search || "").includes(kw) ? "" : "none";
     });
   };
 
@@ -684,6 +814,14 @@
     const { error } = await sb.from("profiles").update({ role: "admin" }).eq("id", id);
     if (error) { toast("Gagal: " + error.message, "err"); return; }
     toast("Berhasil dijadikan admin", "ok");
+    await loadUsers();
+  };
+
+  window.demoteAdmin = async (id) => {
+    if (!confirm("Hapus hak admin pengguna ini?")) return;
+    const { error } = await sb.from("profiles").update({ role: "user" }).eq("id", id);
+    if (error) { toast("Gagal: " + error.message, "err"); return; }
+    toast("Hak admin berhasil dihapus", "ok");
     await loadUsers();
   };
 

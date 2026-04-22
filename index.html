@@ -363,7 +363,7 @@
         List Form
       </a>
       <a href="rekap.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Aktivitas
       </a>
       <a href="lapor.html" class="sidebar-link">
@@ -492,13 +492,142 @@
 </section>
 
 <section class="kpi-grid">
-  <div class="card card--kpi kpi-blue"><div>Total Awardee</div><strong id="kpiPeserta">—</strong></div>
-  <div class="card card--kpi kpi-yellow"><div>Total Aktivitas</div><strong id="kpiAktivitas">—</strong></div>
-  <div class="card card--kpi kpi-blue"><div>Rata-rata Partisipasi</div><strong id="kpiRate">—%</strong></div>
-  <div class="card card--kpi kpi-yellow"><div>Total Kampus</div><strong id="kpiCampus">—</strong></div>
+  <div class="card card--kpi kpi-blue">
+    <div class="kpi-icon-wrap kpi-icon-blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+    <div><div class="kpi-label">Total Awardee</div><strong id="kpiPeserta">—</strong></div>
+  </div>
+  <div class="card card--kpi kpi-yellow">
+    <div class="kpi-icon-wrap kpi-icon-yellow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    <div><div class="kpi-label">Total Aktivitas</div><strong id="kpiAktivitas">—</strong></div>
+  </div>
+  <div class="card card--kpi kpi-green">
+    <div class="kpi-icon-wrap kpi-icon-green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+    <div><div class="kpi-label">Rata-rata Partisipasi</div><strong id="kpiRate">—%</strong></div>
+  </div>
+  <div class="card card--kpi kpi-teal">
+    <div class="kpi-icon-wrap kpi-icon-teal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <div><div class="kpi-label">Total Kampus</div><strong id="kpiCampus">—</strong></div>
+  </div>
+  <div class="card card--kpi kpi-orange">
+    <div class="kpi-icon-wrap kpi-icon-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    <div><div class="kpi-label">Belum Absen Bulan Ini</div><strong id="kpiBelumAbsen">—</strong></div>
+  </div>
+  <div class="card card--kpi kpi-purple">
+    <div class="kpi-icon-wrap kpi-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+    <div><div class="kpi-label">Total Kelompok</div><strong id="kpiKelompok">—</strong></div>
+  </div>
 </section>
 
-<section class="frame-2col">
+<!-- ===== SECTION: TREN + AKTIVITAS ===== -->
+<section class="frame-2col frame-2col--asymm" style="margin-bottom:0;align-items:stretch;">
+
+  <!-- Tren Partisipasi Bulanan -->
+  <div class="data-card" style="padding:20px 20px 14px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00A59F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span style="font-size:14px;font-weight:700;color:#111827;">Tren Partisipasi Bulanan</span>
+      </div>
+      <span style="font-size:11px;color:#9ca3af;" id="trenPeriod">memuat...</span>
+    </div>
+    <div style="position:relative;height:160px;">
+      <canvas id="trenChart" style="width:100%;height:100%;display:block;"></canvas>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:10px;flex-wrap:wrap;" id="trenLegend"></div>
+  </div>
+
+  <!-- Progress per Jenis Kegiatan -->
+  <div class="data-card" style="padding:20px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span style="font-size:14px;font-weight:700;color:#111827;">Progress per Kegiatan</span>
+    </div>
+    <div id="activityRings" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
+  </div>
+
+</section>
+
+<!-- ===== SECTION: AWARDEE BELUM ABSEN ===== -->
+<section style="margin:16px 0 0;">
+  <div class="data-card" style="padding:16px 20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:14px;font-weight:700;color:#111827;">Awardee Belum Absen</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input id="searchBelumAbsen" type="search" placeholder="Cari nama / NIM..." style="border:1px solid #e5e7eb;border-radius:8px;padding:5px 10px;font-size:12px;outline:none;width:180px;">
+        <span id="belumAbsenCount" style="font-size:12px;color:#6b7280;white-space:nowrap;"></span>
+      </div>
+    </div>
+    <!-- Tab bulan -->
+    <div id="belumAbsenTabs" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:12px;scrollbar-width:thin;"></div>
+    <div id="belumAbsenList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;max-height:220px;overflow-y:auto;"></div>
+    <div id="belumAbsenEmpty" style="display:none;text-align:center;padding:24px;color:#9ca3af;font-size:13px;">Semua awardee sudah absen bulan ini</div>
+  </div>
+</section>
+
+<!-- ===== SECTION: DETAIL KEHADIRAN AWARDEE ===== -->
+<section style="margin:16px 0 0;">
+  <div class="data-card" style="padding:0;overflow:hidden;">
+    <div class="detail-awardee-grid" style="display:grid;grid-template-columns:280px 1fr;">
+
+      <!-- ===== KIRI: Ranking list ===== -->
+      <div style="border-right:1px solid #f3f4f6;display:flex;flex-direction:column;height:560px;position:sticky;top:0;">
+        <div style="padding:14px 14px 10px;border-bottom:1px solid #f3f4f6;flex-shrink:0;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span style="font-size:13px;font-weight:700;color:#111827;">Partisipasi Terendah</span>
+          </div>
+          <div style="position:relative;">
+            <input id="searchDetailAwardee" type="search" placeholder="Cari nama / NIM..."
+              style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:6px 10px 6px 30px;font-size:12px;outline:none;box-sizing:border-box;"
+              autocomplete="off">
+            <svg style="position:absolute;left:9px;top:50%;transform:translateY(-50%);pointer-events:none;" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <div id="detailSuggest" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,.08);z-index:50;max-height:200px;overflow-y:auto;"></div>
+          </div>
+        </div>
+        <div id="rankingList" style="flex:1;min-height:0;overflow-y:scroll;padding:6px 0;scrollbar-width:thin;scrollbar-color:#d1d5db transparent;"></div>
+      </div>
+
+      <!-- ===== KANAN: Detail panel ===== -->
+      <div style="padding:20px;overflow:auto;">
+
+        <!-- Placeholder -->
+        <div id="detailPlaceholder" style="display:none;text-align:center;padding:60px 0;color:#9ca3af;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 10px;display:block;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div style="font-size:13px;">Pilih awardee dari daftar</div>
+        </div>
+
+        <!-- Result panel -->
+        <div id="detailPanel">
+
+          <!-- Identity -->
+          <div id="detailIdentity" style="display:flex;align-items:center;gap:14px;padding:14px 16px;background:#f8fafc;border-radius:12px;margin-bottom:16px;flex-wrap:wrap;"></div>
+
+          <!-- Summary row -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;margin-bottom:16px;" id="detailSummaryCards"></div>
+
+          <!-- Two columns: per-activity + per-month -->
+          <div style="display:grid;grid-template-columns:2fr 3fr;gap:16px;align-items:start;" id="detailCols">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Partisipasi per Kegiatan</div>
+              <div id="detailActivityBars"></div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Rekap per Bulan</div>
+              <div id="detailMonthGrid"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="frame-2col" style="display:none;">
 
   <!-- =================== PESERTA TOP =================== -->
   <div class="data-card" data-entity="peserta" data-which="top" data-card-id="peserta-top">
@@ -681,7 +810,7 @@ while (true) {
 
   const { data, error } = await sb
     .from("rekap_bsi")
-    .select("no_induk,nama,kampus,kelompok,pre_test,post_test,assessment,mentoring,pembinaan")
+    .select("no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran")
     .range(from, from + PAGE_SIZE - 1);
 
   if (error) {
@@ -713,7 +842,7 @@ while (true) {
   let totalAct = 0, totalHad = 0;
 
   rows.forEach(r => {
-    const acts = [r.pre_test, r.post_test, r.assessment, r.mentoring, r.pembinaan];
+    const acts = [r.pre_test, r.post_test, r.assessment, r.mentoring, r.pembinaan, r.kelas_al_quran];
 
     // hanya yang ada nilainya ikut pembagi
     const evaluated = acts.filter(isFilled);
@@ -775,17 +904,548 @@ const arrKelompok= Object.values(kelompok)
   .map(x => ({ ...x, rate: safeRate(x), activities: activityMap }))
   .sort(sortFn);
 
-  kpiPeserta.textContent = Object.keys(peserta).length;
-
-  // total aktivitas yang benar-benar ada datanya (bukan 5 * rows)
+  kpiPeserta.textContent   = Object.keys(peserta).length;
   kpiAktivitas.textContent = totalAct;
+  kpiRate.textContent = totalAct > 0 ? (Math.round((totalHad / totalAct) * 100) + "%") : "0%";
+  kpiCampus.textContent    = Object.keys(kampus).length;
+  kpiKelompok.textContent  = Object.keys(kelompok).length;
 
-  // kalau totalAct=0, tampil 0% (hindari NaN)
-  kpiRate.textContent = (totalAct > 0)
-    ? (Math.round((totalHad / totalAct) * 100) + "%")
-    : "0%";
+  // ===== KPI: Belum Absen Bulan Ini =====
+  const now = new Date();
+  const curMonth = now.getMonth(), curYear = now.getFullYear();
+  const absenThisMonth = new Set(
+    rows.filter(r => {
+      const d = new Date(r.tanggal || r.created_at || "");
+      return d.getFullYear() === curYear && d.getMonth() === curMonth && isH(r.mentoring || r.pembinaan || r.pre_test || r.post_test || r.assessment);
+    }).map(r => r.no_induk)
+  );
+  const allNim = new Set(rows.map(r => r.no_induk));
+  const belumSet = [...allNim].filter(n => !absenThisMonth.has(n));
+  kpiBelumAbsen.textContent = belumSet.length;
 
-  kpiCampus.textContent = Object.keys(kampus).length;
+  // ===== TREN BULANAN =====
+  (function renderTren() {
+    const monthLabels = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+    const monthMap = {};
+    rows.forEach(r => {
+      const d = new Date(r.tanggal || "");
+      if (isNaN(d)) return;
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      if (!monthMap[key]) monthMap[key] = { hadir:0, total:0 };
+      const acts = [r.pre_test, r.post_test, r.assessment, r.mentoring, r.pembinaan, r.kelas_al_quran];
+      const ev = acts.filter(isFilled);
+      monthMap[key].total += ev.length;
+      monthMap[key].hadir += ev.filter(isH).length;
+    });
+    const sortedKeys = Object.keys(monthMap).sort().slice(-12);
+    if (!sortedKeys.length) return;
+    const labels = sortedKeys.map(k => { const [y,m] = k.split('-'); return monthLabels[+m-1] + ' ' + y; });
+    const pcts   = sortedKeys.map(k => monthMap[k].total > 0 ? Math.round(monthMap[k].hadir/monthMap[k].total*100) : 0);
+
+    document.getElementById('trenPeriod').textContent = labels[0] + ' – ' + labels[labels.length-1];
+
+    const canvas = document.getElementById('trenChart');
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.parentElement.offsetWidth || 400;
+    const H = 160;
+    canvas.width  = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    const pad = { t:22, r:10, b:32, l:36 };
+    const cw = W - pad.l - pad.r, ch = H - pad.t - pad.b;
+    const maxPct = 100;
+    const step = cw / (labels.length - 1 || 1);
+
+    // Grid lines
+    ctx.strokeStyle = '#f3f4f6'; ctx.lineWidth = 1;
+    [0,25,50,75,100].forEach(p => {
+      const y = pad.t + ch * (1 - p/maxPct);
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l+cw, y); ctx.stroke();
+      ctx.fillStyle = '#9ca3af'; ctx.font = '9px system-ui';
+      ctx.textAlign = 'right'; ctx.fillText(p+'%', pad.l-4, y+3);
+    });
+
+    // Area fill
+    const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t+ch);
+    grad.addColorStop(0, 'rgba(0,165,159,.18)');
+    grad.addColorStop(1, 'rgba(0,165,159,0)');
+    ctx.beginPath();
+    pcts.forEach((p,i) => {
+      const x = pad.l + i*step, y = pad.t + ch*(1-p/maxPct);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.lineTo(pad.l+cw, pad.t+ch); ctx.lineTo(pad.l, pad.t+ch); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Line
+    ctx.beginPath(); ctx.strokeStyle = '#00A59F'; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+    pcts.forEach((p,i) => {
+      const x = pad.l + i*step, y = pad.t + ch*(1-p/maxPct);
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // Dots + data labels + x-axis labels
+    pcts.forEach((p,i) => {
+      const x = pad.l + i*step, y = pad.t + ch*(1-p/maxPct);
+      // dot
+      ctx.beginPath(); ctx.arc(x,y,3.5,0,Math.PI*2);
+      ctx.fillStyle='#fff'; ctx.fill();
+      ctx.strokeStyle='#00A59F'; ctx.lineWidth=2; ctx.stroke();
+      // data label above dot
+      ctx.fillStyle='#00A59F'; ctx.font='bold 9px system-ui'; ctx.textAlign='center';
+      ctx.fillText(p+'%', x, y-8);
+      // x-axis label (shorter: "Des 2025" → "Des")
+      const shortLabel = labels[i].split(' ')[0];
+      ctx.fillStyle='#9ca3af'; ctx.font='9px system-ui';
+      ctx.fillText(shortLabel, x, pad.t+ch+16);
+    });
+
+    // Legend
+    const best  = pcts.indexOf(Math.max(...pcts));
+    const worst = pcts.indexOf(Math.min(...pcts));
+    document.getElementById('trenLegend').innerHTML = `
+      <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:#6b7280;">
+        <span style="width:12px;height:3px;background:#00A59F;border-radius:2px;display:inline-block;"></span> Partisipasi bulanan
+      </span>
+      <span style="font-size:11px;color:#059669;">Tertinggi: ${labels[best]} (${pcts[best]}%)</span>
+      <span style="font-size:11px;color:#dc2626;">Terendah: ${labels[worst]} (${pcts[worst]}%)</span>`;
+  })();
+
+  // ===== PROGRESS RINGS =====
+  (function renderRings() {
+    const ACTS = [
+      { key:'pre_test',   label:'Pre Test',   color:'#0055a5' },
+      { key:'post_test',  label:'Post Test',  color:'#7c3aed' },
+      { key:'assessment', label:'Assessment', color:'#0891b2' },
+      { key:'mentoring',  label:'Mentoring',  color:'#00A59F' },
+      { key:'pembinaan',  label:'Pembinaan',  color:'#f97316' },
+      { key:'kelas_al_quran', label:'Al-Quran', color:'#16a34a' },
+    ];
+    const stats = {};
+    ACTS.forEach(a => stats[a.key] = { hadir:0, total:0 });
+    rows.forEach(r => {
+      ACTS.forEach(a => {
+        const v = r[a.key];
+        if (isFilled(v)) { stats[a.key].total++; if (isH(v)) stats[a.key].hadir++; }
+      });
+    });
+    document.getElementById('activityRings').innerHTML = ACTS.map(a => {
+      const s = stats[a.key];
+      const pct = s.total > 0 ? Math.round(s.hadir/s.total*100) : 0;
+      const r = 26, circ = 2*Math.PI*r;
+      const dash = (pct/100)*circ, gap = circ - dash;
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="position:relative;width:70px;height:70px;">
+          <svg width="70" height="70" viewBox="0 0 70 70">
+            <circle cx="35" cy="35" r="${r}" fill="none" stroke="#f3f4f6" stroke-width="7"/>
+            <circle cx="35" cy="35" r="${r}" fill="none" stroke="${a.color}" stroke-width="7"
+              stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}"
+              stroke-linecap="round"
+              transform="rotate(-90 35 35)"
+              style="transition:stroke-dasharray .6s ease"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#111827;">${pct}%</div>
+        </div>
+        <div style="font-size:11px;font-weight:600;color:#374151;text-align:center;line-height:1.2;">${a.label}</div>
+        <div style="font-size:10px;color:#9ca3af;">${s.hadir}/${s.total}</div>
+      </div>`;
+    }).join('');
+  })();
+
+  // ===== BELUM ABSEN LIST =====
+  (function renderBelumAbsen() {
+    const MONTH_LABELS = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+    const MONTH_FULL   = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
+    // Generate tabs: Dec 2025 → curMonth curYear
+    const START_Y = 2025, START_M = 11; // 0-indexed: 11 = Desember
+    const tabs = [];
+    let y = START_Y, m = START_M;
+    while (y < curYear || (y === curYear && m <= curMonth)) {
+      tabs.push({ y, m, key: `${y}-${String(m+1).padStart(2,'0')}` });
+      m++; if (m > 11) { m = 0; y++; }
+    }
+
+    // Build set: who has ANY activity record in each month
+    const absenPerMonth = {};
+    rows.forEach(r => {
+      const d = new Date(r.tanggal || '');
+      if (isNaN(d)) return;
+      const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      const acts = [r.pre_test, r.post_test, r.assessment, r.mentoring, r.pembinaan, r.kelas_al_quran];
+      if (acts.some(isH)) {
+        if (!absenPerMonth[key]) absenPerMonth[key] = new Set();
+        absenPerMonth[key].add(r.no_induk);
+      }
+    });
+
+    const allNimInfo = {};
+    rows.forEach(r => { if (!allNimInfo[r.no_induk]) allNimInfo[r.no_induk] = { nim: r.no_induk, nama: r.nama || r.no_induk, kampus: r.kampus || '' }; });
+    const allNimList = Object.values(allNimInfo);
+
+    let activeKey = tabs[tabs.length - 1]?.key || '';
+    let currentData = [];
+
+    function getBelumForKey(key) {
+      const hadir = absenPerMonth[key] || new Set();
+      return allNimList.filter(d => !hadir.has(d.nim)).sort((a,b) => a.nama.localeCompare(b.nama));
+    }
+
+    function renderList(data) {
+      const el = document.getElementById('belumAbsenList');
+      const empty = document.getElementById('belumAbsenEmpty');
+      document.getElementById('belumAbsenCount').textContent = data.length + ' awardee';
+      if (!data.length) { el.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      el.innerHTML = data.map(d => `
+        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:8px 12px;cursor:pointer;"
+             onclick="window._selectDetailAwardee('${d.nim}');document.getElementById('rankingList').closest('.data-card').scrollIntoView({behavior:'smooth',block:'start'})">
+          <div style="font-size:12px;font-weight:700;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${d.nama}</div>
+          <div style="font-size:10px;color:#9ca3af;margin-top:1px;">${d.nim}${d.kampus ? ' · '+d.kampus : ''}</div>
+        </div>`).join('');
+    }
+
+    function selectTab(key) {
+      activeKey = key;
+      currentData = getBelumForKey(key);
+      document.getElementById('searchBelumAbsen').value = '';
+      renderList(currentData);
+      document.querySelectorAll('.belum-tab').forEach(btn => {
+        const active = btn.dataset.key === key;
+        btn.style.background = active ? '#f97316' : '#f9fafb';
+        btn.style.color = active ? '#fff' : '#374151';
+        btn.style.borderColor = active ? '#f97316' : '#e5e7eb';
+        btn.style.fontWeight = active ? '700' : '500';
+      });
+      // scroll active tab into view
+      const activeBtn = document.querySelector(`.belum-tab[data-key="${key}"]`);
+      if (activeBtn) activeBtn.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+    }
+
+    // Render tabs
+    const tabsEl = document.getElementById('belumAbsenTabs');
+    tabsEl.innerHTML = tabs.map(t => `
+      <button class="belum-tab" data-key="${t.key}"
+        style="flex-shrink:0;padding:5px 12px;border-radius:20px;border:1px solid #e5e7eb;background:#f9fafb;color:#374151;font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .15s;">
+        ${MONTH_LABELS[t.m]} ${t.y}
+      </button>`).join('');
+
+    tabsEl.querySelectorAll('.belum-tab').forEach(btn => {
+      btn.addEventListener('click', () => selectTab(btn.dataset.key));
+    });
+
+    selectTab(activeKey);
+
+    document.getElementById('searchBelumAbsen').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      renderList(q ? currentData.filter(d => d.nama.toLowerCase().includes(q) || d.nim.toLowerCase().includes(q)) : currentData);
+    });
+  })();
+
+  // ===== DETAIL KEHADIRAN PER AWARDEE =====
+  (function initDetailAwardee() {
+    const ACTS = [
+      { key:'pre_test',        label:'Pre Test',    color:'#0055a5' },
+      { key:'post_test',       label:'Post Test',   color:'#7c3aed' },
+      { key:'assessment',      label:'Assessment',  color:'#0891b2' },
+      { key:'mentoring',       label:'Mentoring',   color:'#00A59F' },
+      { key:'pembinaan',       label:'Pembinaan',   color:'#f97316' },
+      { key:'kelas_al_quran',  label:'Al-Quran',    color:'#16a34a' },
+    ];
+    const MONTH_SHORT = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+    const MONTH_FULL  = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+
+    // Build per-nim index from rows
+    const nimIndex = {};
+    rows.forEach(r => {
+      if (!nimIndex[r.no_induk]) nimIndex[r.no_induk] = { nim: r.no_induk, nama: r.nama || '', kampus: r.kampus || '', kelompok: r.kelompok || '', records: [] };
+      nimIndex[r.no_induk].records.push(r);
+    });
+
+    // Compute overall pct per awardee for ranking
+    function calcPct(awardee) {
+      let hadir = 0, total = 0;
+      awardee.records.forEach(r => {
+        ACTS.forEach(a => {
+          const v = r[a.key]; if (!isFilled(v)) return;
+          total++; if (isH(v)) hadir++;
+        });
+      });
+      return { hadir, total, pct: total > 0 ? Math.round(hadir/total*100) : null };
+    }
+
+    const allAwardee = Object.values(nimIndex).map(a => ({ ...a, _s: calcPct(a) }))
+      .filter(a => a._s.total > 0)
+      .sort((a,b) => (a._s.pct??101) - (b._s.pct??101) || a.nama.localeCompare(b.nama));
+
+    let activeNim = null;
+
+    // Ranking list renderer
+    let rankList = allAwardee;
+
+    function renderRankingList(list) {
+      rankList = list;
+      const el = document.getElementById('rankingList');
+      el.innerHTML = list.map((a, i) => {
+        const pct = a._s.pct;
+        const col = pct >= 80 ? '#16a34a' : pct >= 60 ? '#f97316' : '#dc2626';
+        return `<div class="rank-item" data-nim="${a.nim}"
+          onclick="window._selectDetailAwardee('${a.nim}')"
+          style="display:flex;align-items:center;gap:9px;padding:8px 14px;cursor:pointer;border-left:3px solid transparent;transition:background .12s;">
+          <div style="font-size:11px;font-weight:700;color:#d1d5db;width:22px;text-align:right;flex-shrink:0;">${i+1}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.nama}</div>
+            <div style="font-size:10px;color:#9ca3af;">${a.nim}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:13px;font-weight:800;color:${col};">${pct}%</div>
+            <div style="font-size:10px;color:#9ca3af;">${a._s.hadir}/${a._s.total}</div>
+          </div>
+        </div>`;
+      }).join('');
+      if (activeNim) highlightActive(activeNim);
+    }
+
+    function highlightActive(nim) {
+      document.querySelectorAll('.rank-item').forEach(el => {
+        const isActive = el.dataset.nim === nim;
+        el.style.background = isActive ? '#eff6ff' : '';
+        el.style.borderLeftColor = isActive ? '#0055a5' : 'transparent';
+      });
+    }
+
+    renderRankingList(allAwardee);
+
+    // Suggest dropdown
+    const inp = document.getElementById('searchDetailAwardee');
+    const sug = document.getElementById('detailSuggest');
+
+    function showSuggest(q) {
+      const matches = q.length < 1 ? [] : allAwardee.filter(a =>
+        a.nama.toLowerCase().includes(q) || a.nim.toLowerCase().includes(q)
+      ).slice(0, 12);
+      if (!matches.length) {
+        // filter ranking list too
+        renderRankingList(allAwardee.filter(a => a.nama.toLowerCase().includes(q) || a.nim.toLowerCase().includes(q)));
+        sug.style.display = 'none'; return;
+      }
+      renderRankingList(allAwardee.filter(a => a.nama.toLowerCase().includes(q) || a.nim.toLowerCase().includes(q)));
+      sug.style.display = 'none';
+    }
+    inp.addEventListener('input', () => showSuggest(inp.value.toLowerCase()));
+    document.addEventListener('click', e => { if (!e.target.closest('#searchDetailAwardee, #detailSuggest')) sug.style.display = 'none'; });
+
+    window._selectDetailAwardee = function(nim) {
+      const awardee = nimIndex[nim];
+      if (!awardee) return;
+      inp.value = '';
+      sug.style.display = 'none';
+      activeNim = nim;
+      highlightActive(nim);
+      // scroll rank item into view
+      const el = document.querySelector(`.rank-item[data-nim="${nim}"]`);
+      if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+      renderDetail(awardee);
+    };
+
+    // Auto-select lowest by default
+    if (allAwardee.length) window._selectDetailAwardee(allAwardee[0].nim);
+
+    function renderDetail(awardee) {
+
+      const recs = awardee.records;
+
+      // === Identity ===
+      const initials = awardee.nama.trim().split(/\s+/).reduce((acc,w,i,arr) =>
+        i===0||i===arr.length-1 ? acc+w[0] : acc, '').slice(0,2).toUpperCase();
+      document.getElementById('detailIdentity').innerHTML = `
+        <div style="width:46px;height:46px;border-radius:50%;background:#0055a5;color:#fff;font-size:16px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+        <div style="flex:1;min-width:160px;">
+          <div style="font-size:16px;font-weight:800;color:#111827;">${awardee.nama}</div>
+          <div style="font-size:12px;color:#6b7280;margin-top:2px;display:flex;gap:10px;flex-wrap:wrap;">
+            <span>${awardee.nim}</span>
+            ${awardee.kampus ? `<span>· ${awardee.kampus}</span>` : ''}
+            ${awardee.kelompok ? `<span>· Kelompok ${awardee.kelompok}</span>` : ''}
+          </div>
+        </div>
+        <a href="rekap.html?type=peserta&value=${encodeURIComponent(awardee.nama)}" target="_blank"
+          style="font-size:12px;color:#00A59F;text-decoration:none;font-weight:600;display:flex;align-items:center;gap:4px;white-space:nowrap;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Lihat Rekap Lengkap
+        </a>`;
+
+      // === Per-activity stats ===
+      const actStats = {};
+      ACTS.forEach(a => actStats[a.key] = { hadir:0, tp:0, tidak:0, total:0 });
+      recs.forEach(r => {
+        ACTS.forEach(a => {
+          const v = r[a.key];
+          if (!isFilled(v)) return;
+          actStats[a.key].total++;
+          if (v === '✅') actStats[a.key].hadir++;
+          else if (v === 'TP') actStats[a.key].tp++;
+          else actStats[a.key].tidak++;
+        });
+      });
+
+      // === Summary cards ===
+      function renderSummaryCards(filterKey) {
+        const actsToUse = filterKey ? ACTS.filter(a => a.key === filterKey) : ACTS;
+        const th  = actsToUse.reduce((s,a) => s + actStats[a.key].hadir + actStats[a.key].tp, 0);
+        const ta  = actsToUse.reduce((s,a) => s + actStats[a.key].total, 0);
+        const ttk = actsToUse.reduce((s,a) => s + actStats[a.key].tidak, 0);
+        const pct = ta > 0 ? Math.round(th/ta*100) : 0;
+        const pctCol = pct >= 80 ? '#16a34a' : pct >= 60 ? '#f97316' : '#dc2626';
+        const bulanAkt = new Set(recs.filter(r => actsToUse.some(a => isH(r[a.key]))).map(r => {
+          const d = new Date(r.tanggal||''); return isNaN(d)?null:`${d.getFullYear()}-${d.getMonth()}`;
+        }).filter(Boolean)).size;
+        const label = filterKey ? (ACTS.find(a=>a.key===filterKey)?.label || '') : 'Semua Kegiatan';
+        const hadirMurni = actsToUse.reduce((s,a) => s + actStats[a.key].hadir, 0);
+        const pctMurni = ta > 0 ? Math.round(hadirMurni/ta*100) : 0;
+        document.getElementById('detailSummaryCards').innerHTML = `
+          <div style="grid-column:1/-1;font-size:11px;color:#9ca3af;font-weight:600;padding:0 2px 4px;">
+            ${filterKey ? `Filter: <span style="color:#0055a5;">${label}</span> &mdash; klik kegiatan lagi untuk reset` : 'Semua kegiatan'}
+          </div>` + [
+          { label:'Total Sesi',     val: ta,            bg:'#eff6ff', col:'#1d4ed8' },
+          { label:'Hadir / TP',     val: th,            bg:'#f0fdf4', col:'#16a34a' },
+          { label:'Hadir Murni',    val: hadirMurni,    bg:'#f0fdf4', col:'#059669' },
+          { label:'Tidak Hadir',    val: ttk,           bg:'#fef2f2', col:'#dc2626' },
+          { label:'Tingkat Hadir',  val: pct+'%',       bg: pct>=80?'#f0fdf4':pct>=60?'#fff7ed':'#fef2f2', col: pctCol },
+          { label:'Hadir Murni %',  val: pctMurni+'%',  bg:'#f0fdfa', col:'#0d9488' },
+          { label:'Bulan Aktif',    val: bulanAkt,      bg:'#faf5ff', col:'#7c3aed' },
+        ].map(c => `
+          <div style="background:${c.bg};border-radius:12px;padding:12px 14px;">
+            <div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${c.label}</div>
+            <div style="font-size:22px;font-weight:800;color:${c.col};">${c.val}</div>
+          </div>`).join('');
+      }
+      renderSummaryCards(null);
+
+      // === Activity bars ===
+      const sortedActs = ACTS.map(a => ({ ...a, ...actStats[a.key], pct: actStats[a.key].total > 0 ? Math.round((actStats[a.key].hadir+actStats[a.key].tp)/actStats[a.key].total*100) : null }))
+        .sort((a,b) => (a.pct??101) - (b.pct??101));
+
+      let activeActKey = null;
+
+      function renderMonthGrid(filterKey) {
+        const titleEl = document.querySelector('#detailCols > div:last-child > div:first-child');
+        if (titleEl) titleEl.textContent = filterKey
+          ? 'Rekap per Bulan — ' + (ACTS.find(a=>a.key===filterKey)?.label || filterKey)
+          : 'Rekap per Bulan';
+
+        const monthData = {};
+        recs.forEach(r => {
+          const d = new Date(r.tanggal||'');
+          if (isNaN(d)) return;
+          const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+          const actsToCount = filterKey ? ACTS.filter(a => a.key === filterKey) : ACTS;
+          actsToCount.forEach(a => {
+            const v = r[a.key]; if (!isFilled(v)) return;
+            if (!monthData[key]) monthData[key] = { hadir:0, tp:0, tidak:0, total:0, y:d.getFullYear(), m:d.getMonth() };
+            monthData[key].total++;
+            if (v==='✅') monthData[key].hadir++;
+            else if (v==='TP') monthData[key].tp++;
+            else monthData[key].tidak++;
+          });
+        });
+        const sortedMonths = Object.entries(monthData).sort(([a],[b]) => a.localeCompare(b));
+        const use2Col = sortedMonths.length > 6;
+        const monthCards = sortedMonths.map(([key, md]) => {
+          const pct = md.total > 0 ? Math.round((md.hadir+md.tp)/md.total*100) : 0;
+          const bg  = pct >= 80 ? '#dcfce7' : pct >= 60 ? '#ffedd5' : '#fee2e2';
+          const col = pct >= 80 ? '#16a34a' : pct >= 60 ? '#c2410c' : '#dc2626';
+          const dot = pct >= 80 ? '#16a34a' : pct >= 60 ? '#f97316' : '#dc2626';
+          return `
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:${bg};border-radius:10px;margin-bottom:6px;">
+              <div style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0;"></div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:11px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${MONTH_FULL[md.m]} ${md.y}</div>
+                <div style="font-size:10px;color:#6b7280;">Hadir ${md.hadir} · TP ${md.tp} · Absen ${md.tidak}/${md.total}</div>
+              </div>
+              <div style="font-size:13px;font-weight:800;color:${col};flex-shrink:0;">${pct}%</div>
+            </div>`;
+        });
+        const gridEl = document.getElementById('detailMonthGrid');
+        if (!sortedMonths.length) {
+          gridEl.innerHTML = '<div style="color:#9ca3af;font-size:12px;text-align:center;padding:20px 0;">Tidak ada data</div>';
+        } else if (use2Col) {
+          const half = Math.ceil(monthCards.length / 2);
+          gridEl.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 10px;">
+            <div>${monthCards.slice(0, half).join('')}</div>
+            <div>${monthCards.slice(half).join('')}</div>
+          </div>`;
+        } else {
+          gridEl.innerHTML = monthCards.join('');
+        }
+      }
+
+      function highlightActivityBar(key) {
+        document.querySelectorAll('.act-bar-item').forEach(el => {
+          const isActive = el.dataset.key === key;
+          el.style.background = isActive ? '#eff6ff' : '';
+          el.style.borderRadius = isActive ? '10px' : '';
+          el.style.padding = isActive ? '8px' : '0';
+          el.style.margin = isActive ? '0 -8px 4px' : '0 0 12px';
+        });
+      }
+
+      document.getElementById('detailActivityBars').innerHTML = sortedActs.map(a => {
+        if (a.pct === null) return `
+          <div class="act-bar-item" data-key="${a.key}" style="margin-bottom:12px;opacity:.5;cursor:default;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+              <span style="font-weight:600;color:#374151;">${a.label}</span>
+              <span style="color:#9ca3af;">Tidak ada data</span>
+            </div>
+          </div>`;
+        const barColor = a.pct >= 80 ? a.color : a.pct >= 60 ? '#f97316' : '#dc2626';
+        const badge = a.pct < 60 ? `<span style="font-size:10px;background:#fef2f2;color:#dc2626;padding:1px 7px;border-radius:20px;font-weight:700;margin-left:4px;">Perlu Perhatian</span>` :
+                      a.pct < 80 ? `<span style="font-size:10px;background:#fff7ed;color:#c2410c;padding:1px 7px;border-radius:20px;font-weight:700;margin-left:4px;">Cukup</span>` : '';
+        return `
+          <div class="act-bar-item" data-key="${a.key}" style="margin-bottom:12px;cursor:pointer;transition:all .15s;"
+               onmouseover="this.style.background='#f9fafb';this.style.borderRadius='10px';this.style.padding='8px';this.style.margin='0 -8px 4px';"
+               onmouseout="if(window._activeActKey!==this.dataset.key){this.style.background='';this.style.borderRadius='';this.style.padding='0';this.style.margin='0 0 12px';}">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+              <span style="font-size:12px;font-weight:700;color:#374151;">${a.label}${badge}</span>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:12px;font-weight:700;color:${barColor};">${a.pct}%</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+            </div>
+            <div style="background:#f3f4f6;border-radius:999px;height:8px;overflow:hidden;">
+              <div style="height:100%;width:${a.pct}%;background:${barColor};border-radius:999px;transition:width .5s ease;"></div>
+            </div>
+            <div style="font-size:10px;color:#9ca3af;margin-top:3px;">
+              Hadir ${a.hadir} · TP ${a.tp} · Tidak Hadir ${a.tidak} / ${a.total} sesi
+            </div>
+          </div>`;
+      }).join('');
+
+      // Click handler on activity bars
+      document.getElementById('detailActivityBars').querySelectorAll('.act-bar-item[data-key]').forEach(el => {
+        el.addEventListener('click', () => {
+          const key = el.dataset.key;
+          if (activeActKey === key) {
+            activeActKey = null;
+            window._activeActKey = null;
+            el.style.background = ''; el.style.borderRadius = ''; el.style.padding = '0'; el.style.margin = '0 0 12px';
+            renderMonthGrid(null);
+            renderSummaryCards(null);
+          } else {
+            activeActKey = key;
+            window._activeActKey = key;
+            highlightActivityBar(key);
+            renderMonthGrid(key);
+            renderSummaryCards(key);
+          }
+        });
+      });
+
+      renderMonthGrid(null);
+    }
+  })();
 
   function render(el, arr, type, barClass, start = 0){
     let h = "<tr><th>#</th><th>Nama</th><th>Partisipasi</th><th>Persentase</th></tr>";

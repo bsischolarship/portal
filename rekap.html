@@ -435,6 +435,8 @@
     .qtr-detail-bar-fill.bar-mid  { background: #eab308; }
     .qtr-detail-bar-fill.bar-low  { background: #ef4444; }
 
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     /* KPI strip: sembunyikan di mobile (digantikan versi inline di dalam card) */
     @media (max-width: 768px) {
       #kpiStrip { display: none !important; }
@@ -564,6 +566,7 @@
     }
     .rekap-top-bar .rtb-legend {
       flex: 0 0 auto;
+      align-self: flex-end;
     }
     /* Sembunyikan mobile-keterangan karena sekarang selalu tampil */
     .mobile-keterangan { display: none !important; }
@@ -623,7 +626,7 @@
         List Form
       </a>
       <a href="rekap.html" class="sidebar-link active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Aktivitas
       </a>
       <a href="lapor.html" class="sidebar-link">
@@ -700,7 +703,13 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00a79d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           Rekap Progress Awardee
         </h1>
-        <p class="card-text" style="margin-top:4px;">Cari rekap kehadiran dan partisipasi awardee berdasarkan No Induk atau nama.</p>
+        <!-- Identitas awardee — hanya tampil untuk non-admin -->
+        <div id="bannerIdentitas" style="display:none;margin-top:10px;padding:14px 18px;background:linear-gradient(90deg,#ea6000 0%,#f97316 45%,#FEB23E 100%);border-radius:12px;color:#fff;">
+          <div style="font-size:11px;opacity:.75;font-weight:600;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px;" id="bannerNim"></div>
+          <div style="font-size:18px;font-weight:800;margin-bottom:6px;" id="bannerNama"></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="bannerMeta"></div>
+        </div>
+        <p class="card-text" id="bannerDesc" style="margin-top:4px;">Cari rekap kehadiran dan partisipasi awardee berdasarkan No Induk atau nama.</p>
       </div>
       <div class="rtb-legend guide-placeholder" style="margin:0;min-width:260px;">
         <span class="guide-placeholder-label">Keterangan Status</span>
@@ -716,13 +725,13 @@
   <!-- FORM + HASIL: full width -->
   <section class="card card--form-panel">
 
-    <div class="alert alert--warning">
+    <div class="alert alert--warning" id="searchAlert">
       <strong>Perhatian.</strong>
       <span>Ketik No Induk atau nama lengkap, lalu pilih dari daftar yang muncul untuk menampilkan rekap aktivitas.</span>
     </div>
 
     <!-- INPUT NAMA / NIM -->
-    <form class="nim-form" onsubmit="return false;">
+    <form class="nim-form" id="nimForm" onsubmit="return false;">
       <label for="fNoInduk" class="nim-label">Ketik No Induk atau Nama</label>
       <p class="nim-info">Pilihan akan muncul otomatis saat kamu mengetik.</p>
 
@@ -785,6 +794,12 @@
         <div style="margin-bottom:10px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
         <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:4px;">Belum ada data</div>
         <div style="font-size:12px;color:#6b7280;">Masukkan No Induk atau nama untuk menampilkan rekap.</div>
+      </div>
+
+      <!-- Loading state (untuk awardee sebelum data selesai dimuat) -->
+      <div id="loadingState" style="display:none;text-align:center;padding:40px 16px;">
+        <div style="width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#00A59F;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;"></div>
+        <div style="font-size:13px;color:#6b7280;font-weight:600;">Memuat rekap aktivitas...</div>
       </div>
 
       <!-- KPI strip -->
@@ -852,6 +867,20 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+/* ================= DETEKSI AWARDEE — jalankan segera ================= */
+(function() {
+  try {
+    const cached = JSON.parse(sessionStorage.getItem('_bsi_auth') || 'null');
+    if (cached && cached.role !== 'admin' && cached.nis) {
+      // Langsung sembunyikan form & empty state, tampilkan loading
+      document.getElementById('searchAlert').style.display  = 'none';
+      document.getElementById('nimForm').style.display      = 'none';
+      document.getElementById('emptyState').style.display   = 'none';
+      document.getElementById('loadingState').style.display = 'block';
+    }
+  } catch (_) {}
+})();
+
 /* ================= EXTRA FILTERS TOGGLE ================= */
 function toggleExtraFilters() {
   const el = document.getElementById("extraFilters");
@@ -992,10 +1021,8 @@ document.addEventListener("click", (e) => {
 /* ================= KPI ================= */
 function renderKPI(rows) {
   function pct(key) {
-    const ev = rows.filter(r => r[key] !== null && r[key] !== undefined && String(r[key]).trim() !== "");
-    if (!ev.length) return "-";
-    const ok = ev.filter(r => r[key] === "✅" || r[key] === "TP").length;
-    return Math.round((ok / ev.length) * 100) + "%";
+    const stat = pctVal(rows, key);
+    return stat ? stat.pct + "%" : "-";
   }
   document.getElementById("kpiPre").textContent        = pct("pre_test");
   document.getElementById("kpiPost").textContent       = pct("post_test");
@@ -1445,6 +1472,46 @@ async function init() {
   // init label periode
   updatePeriodeBtnLabel();
 
+  // ── Auto-fill NIM dari session untuk awardee ──
+  try {
+    const cached = JSON.parse(sessionStorage.getItem('_bsi_auth') || 'null');
+    if (cached && cached.role !== 'admin' && cached.nis) {
+      fNoInduk.value = cached.nis;
+      document.getElementById('searchAlert').style.display  = 'none';
+      document.getElementById('nimForm').style.display      = 'none';
+      document.getElementById('loadingState').style.display = 'none';
+
+      // Isi banner identitas dari mahasiswa_bsi
+      const sample = all.find(r => (r.no_induk || '').toLowerCase() === cached.nis.toLowerCase());
+      if (sample) {
+        let mhs = {};
+        try {
+          const { data: mhsData } = await supabaseClient
+            .from('mahasiswa_bsi')
+            .select('no_induk,nama,kampus,kelompok,fakultas,prodi,cluster,lecture,email,wa,status')
+            .eq('no_induk', sample.no_induk)
+            .maybeSingle();
+          if (mhsData) mhs = mhsData;
+        } catch (_) {}
+        document.getElementById('bannerNim').textContent  = sample.no_induk;
+        document.getElementById('bannerNama').textContent = mhs.nama || sample.nama || cached.name || '';
+        const pills = [
+          mhs.kampus    || sample.kampus,
+          mhs.kelompok  ? 'Kelompok ' + mhs.kelompok  : (sample.kelompok ? 'Kelompok ' + sample.kelompok : null),
+          mhs.fakultas,
+          mhs.prodi,
+          mhs.cluster   ? 'Cluster: ' + mhs.cluster   : null,
+          mhs.lecture   ? 'Lecture: ' + mhs.lecture    : null,
+        ].filter(Boolean);
+        document.getElementById('bannerMeta').innerHTML = pills.map(p =>
+          `<span style="background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;white-space:nowrap;">${p}</span>`
+        ).join('');
+        document.getElementById('bannerIdentitas').style.display = 'block';
+        document.getElementById('bannerDesc').style.display      = 'none';
+      }
+    }
+  } catch (_) {}
+
   applyFilter();
 }
 
@@ -1473,7 +1540,7 @@ function pctVal(rows, key) {
   const ev = rows.filter(r => r[key] !== null && r[key] !== undefined && String(r[key]).trim() !== "");
   if (!ev.length) return null;
   const ok = ev.filter(r => r[key] === "✅" || r[key] === "TP").length;
-  return Math.round((ok / ev.length) * 100);
+  return { ok, total: ev.length, pct: Math.round((ok / ev.length) * 100) };
 }
 
 function colorClass(v) {
@@ -1526,13 +1593,17 @@ function renderQuarterly(rows) {
     // Hitung per aktivitas
     const actData = QTR_ACTS.map(a => ({
       label: a.label,
-      pct: pctVal(qRows, a.key),
+      key: a.key,
+      stat: pctVal(qRows, a.key),
     }));
 
     // Rata-rata (abaikan null)
-    const valid = actData.filter(a => a.pct !== null);
-    const avg   = valid.length ? Math.round(valid.reduce((s, a) => s + a.pct, 0) / valid.length) : null;
+    const valid = actData.filter(a => a.stat !== null);
+    const avg   = valid.length ? Math.round(valid.reduce((s, a) => s + a.stat.pct, 0) / valid.length) : null;
     const avgClass = avg !== null ? colorClass(avg) : "";
+
+    const totalOk    = valid.reduce((s, a) => s + a.stat.ok, 0);
+    const totalAll   = valid.reduce((s, a) => s + a.stat.total, 0);
 
     const card = document.createElement("div");
     card.className = "qtr-card";
@@ -1542,20 +1613,30 @@ function renderQuarterly(rows) {
           <div class="qtr-card-title">Kuartal ${idx + 1}</div>
           <div class="qtr-card-range">${range}</div>
         </div>
-        ${avg !== null
-          ? `<span class="qtr-avg-badge avg-${avgClass}">${avg}% rata-rata</span>`
-          : `<span class="qtr-avg-badge">–</span>`}
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${avg !== null ? `
+            <span style="font-size:11px;color:#6b7280;font-weight:500;">${totalOk} dari ${totalAll} kegiatan</span>
+            <span class="qtr-avg-badge avg-${avgClass}">${avg}% rata-rata</span>
+          ` : `<span class="qtr-avg-badge">–</span>`}
+        </div>
       </div>
       <div class="qtr-detail-grid">
         ${actData.map(a => {
-          const cls  = a.pct !== null ? colorClass(a.pct) : "";
-          const fill = a.pct !== null ? a.pct : 0;
+          if (!a.stat) return `
+            <div class="qtr-detail-item">
+              <span class="qtr-detail-label">${a.label}</span>
+              <span class="qtr-detail-pct" style="color:#d1d5db;">–</span>
+              <span style="font-size:10px;color:#9ca3af;">Belum ada data</span>
+              <div class="qtr-detail-bar"><div class="qtr-detail-bar-fill" style="width:0%"></div></div>
+            </div>`;
+          const cls = colorClass(a.stat.pct);
           return `
             <div class="qtr-detail-item">
               <span class="qtr-detail-label">${a.label}</span>
-              <span class="qtr-detail-pct pct-${cls}">${a.pct !== null ? a.pct + "%" : "–"}</span>
+              <span class="qtr-detail-pct pct-${cls}">${a.stat.pct}%</span>
+              <span style="font-size:11px;color:#6b7280;font-weight:600;">${a.stat.ok} <span style="font-weight:400;">dari</span> ${a.stat.total}</span>
               <div class="qtr-detail-bar">
-                <div class="qtr-detail-bar-fill bar-${cls}" style="width:${fill}%"></div>
+                <div class="qtr-detail-bar-fill bar-${cls}" style="width:${a.stat.pct}%"></div>
               </div>
             </div>`;
         }).join("")}

@@ -245,7 +245,7 @@
         List Form
       </a>
       <a href="rekap.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Aktivitas
       </a>
       <a href="lapor.html" class="sidebar-link">
@@ -387,28 +387,6 @@
       </div>
     </div>
 
-    <!-- Edit nama lengkap -->
-    <div class="profile-section">
-      <div class="profile-section-title">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        Edit Profil
-      </div>
-
-      <div class="pw-field">
-        <label>Nama Lengkap</label>
-        <div class="field-wrapper">
-          <input id="profileName" type="text" placeholder="Nama lengkap kamu" style="padding-right:12px;" />
-        </div>
-      </div>
-
-      <button class="btn-save-pw" id="saveNameBtn" onclick="saveName()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Simpan Nama
-      </button>
-
-      <div class="pw-msg" id="nameMsg"></div>
-    </div>
-
     <!-- Ganti password -->
     <div class="profile-section">
       <div class="profile-section-title">
@@ -484,9 +462,7 @@ async function populateProfile() {
     ? `<span style="color:#15803d;font-weight:700;">Terverifikasi</span>`
     : `<span style="color:#b91c1c;">Belum terverifikasi</span>`;
 
-  // Populate name field from cache
   const cached = JSON.parse(sessionStorage.getItem("_bsi_auth") || "{}");
-  if (cached.name) document.getElementById("profileName").value = cached.name;
 
   const heroAvatar = document.getElementById("heroAvatar");
   const heroEmail  = document.getElementById("heroEmail");
@@ -559,33 +535,6 @@ async function populateProfile() {
 }
 
 window.addEventListener("load", populateProfile);
-
-async function saveName() {
-  const name = document.getElementById("profileName").value.trim();
-  const msg  = document.getElementById("nameMsg");
-  const btn  = document.getElementById("saveNameBtn");
-
-  msg.className = "pw-msg";
-  if (!name) { msg.className = "pw-msg err"; msg.textContent = "Nama tidak boleh kosong."; return; }
-
-  btn.disabled = true;
-  const { error } = await window._authClient
-    .from("profiles").update({ full_name: name }).eq("id", window._authUser.id);
-  btn.disabled = false;
-
-  if (error) {
-    msg.className = "pw-msg err"; msg.textContent = "Gagal: " + error.message;
-  } else {
-    msg.className = "pw-msg ok"; msg.textContent = "Nama berhasil diperbarui.";
-    // Update cache & header
-    const cached = JSON.parse(sessionStorage.getItem("_bsi_auth") || "{}");
-    cached.name = name;
-    sessionStorage.setItem("_bsi_auth", JSON.stringify(cached));
-    document.getElementById("heroEmail").textContent = name;
-    const hName = document.getElementById("headerName");
-    if (hName) hName.textContent = name;
-  }
-}
 
 async function changePassword() {
   const newPw  = document.getElementById("pwNew").value;

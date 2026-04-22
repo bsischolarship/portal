@@ -7,6 +7,11 @@
     <link rel="icon" href="assets/logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
     <link rel="stylesheet" href="assets/style.css" />
+<style>
+.nim-form,#section-input,#form-banner{visibility:hidden;opacity:0;pointer-events:none}
+.form-card-reveal{animation:formFadeIn .35s ease forwards}
+@keyframes formFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 
 <body data-page="form" data-form-slug="mentoring" data-page="form">
@@ -32,7 +37,7 @@
         List Form
       </a>
       <a href="rekap.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Aktivitas
       </a>
       <a href="lapor.html" class="sidebar-link">
@@ -103,7 +108,7 @@
     <section class="split-left card card--guide">
         
         <div class="pill pill--green">Pengisian Form</div>
-        <h1 class="card-title card-title--big">✅ Kehadiran Mentoring</h1>
+        <h1 class="card-title card-title--big"> Kehadiran Mentoring</h1>
         <p class="card-text">
             Ikuti langkah berikut untuk mengisi kehadiran mentoring:
         </p>
@@ -126,7 +131,7 @@
         <!-- MOBILE TITLE (hanya muncul di mobile) -->
         <div class="mobile-form-title">
             <span class="hero-badge">Form Pengisian</span>
-            <h1 class="card-title card-title--big">✅ Kehadiran Mentoring</h1>
+            <h1 class="card-title card-title--big"> Kehadiran Mentoring</h1>
             <p class="card-text">
                 Presensi Kehadiran Mentoring Awardee BSI Scholarship Inspirasi Batch 5.
             </p>
@@ -152,7 +157,6 @@ Jika identitas sudah sesuai dengan dirimu, lanjutkan Buka Google Form.</span>
                     class="nim-input"
                     placeholder="Contoh: Budi Santoso"
                     autocomplete="off"
-                    required
                 />
 
                 <!-- === DROPDOWN SUGGESTION (DIPAKAI OLEH main.js) === -->
@@ -171,7 +175,7 @@ Jika identitas sudah sesuai dengan dirimu, lanjutkan Buka Google Form.</span>
         <div id="cek-result" class="cek-result"></div>
 
         <div class="tips-box">
-            <h3 class="tips-title">Tips Penting💡</h3>
+            <h3 class="tips-title">Tips Penting</h3>
             <ul class="list">
                 <li>Kamu akan diarahkan ke Google Form untuk mengisi kehadiran.</li>
                 <li>Di Google Form, identitas akan terisi otomatis. Tidak perlu mengisi ulang.</li>

@@ -7,6 +7,11 @@
     <link rel="icon" href="assets/logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
     <link rel="stylesheet" href="assets/style.css" />
+<style>
+.nim-form,#section-input,#form-banner{visibility:hidden;opacity:0;pointer-events:none}
+.form-card-reveal{animation:formFadeIn .35s ease forwards}
+@keyframes formFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
 </head>
 
 <body data-page="form" data-form-slug="tugas-pengganti" data-page="form">
@@ -32,7 +37,7 @@
         List Form
       </a>
       <a href="rekap.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Aktivitas
       </a>
       <a href="lapor.html" class="sidebar-link">
@@ -102,7 +107,7 @@
     <div class="centered-card">
         <div class="header-section">
             <span class="hero-badge">Form Pengisian</span>
-            <h1 id="form-title-main" class="main-title">🧾 Tugas Pengganti Pembinaan & Mentoring</h1>
+            <h1 id="form-title-main" class="main-title"> Tugas Pengganti Pembinaan & Mentoring</h1>
         </div>
 
 <div class="alert alert--warning" id="form-banner">
@@ -110,12 +115,12 @@
             <span>Cukup ketik nama lengkapmu, lalu verifikasi identitas. Jika identitas sudah sesuai, lanjut ke Form.</span>
         </div>
 
-<div id="section-input">
+<div id="section-input" style="display:none;">
             <div class="input-group">
                 <label for="nim" class="nim-label">Ketik Nama Lengkap</label>
                 <p class="nim-info">Pilih nama kamu dari daftar yang muncul.</p>
                 <div class="nim-field-wrapper">
-                    <input id="nim" type="text" class="nim-input" placeholder="Contoh: Naufal Rayyan" autocomplete="off" required />
+                    <input id="nim" type="text" class="nim-input" placeholder="Contoh: Naufal Rayyan" autocomplete="off" />
                     <div id="nim-suggestions" class="nim-suggestion-box"></div>
                 </div>
                 <button type="submit" onclick="handleVerification(event)" class="btn-full btn-success">
@@ -127,7 +132,7 @@
 <div id="section-validation" style="display: none;">
     <div class="verification-header" style="text-align: center; margin-bottom: 20px;">
         <div style="background: #e6f4f1; color: #2d5a5e; border-radius: 50%; width: 45px; height: 45px; line-height: 45px; margin: 0 auto 10px; font-weight: bold; font-size: 20px;">
-            👤
+            
         </div>
         <h2 style="margin: 0; color: #00A79D; font-size: 20px;">Benarkah ini kamu? Silakan cek dulu ya!</h2>
     </div>
@@ -136,7 +141,7 @@
         
         <div style="margin-bottom: 15px;">
             <strong id="v-nama" style="display: block; font-size: 18px; color: #1e293b; margin-bottom: 4px;">Nama Lengkap</strong>
-            <span id="v-univ" style="font-size: 14px; color: #666; display: block;">📍 Universitas</span>
+            <span id="v-univ" style="font-size: 14px; color: #666; display: block;"> Universitas</span>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #eee; padding-top: 15px;">
@@ -155,12 +160,12 @@
         <strong>Pastikan ini data kamu sebelum lanjut.</strong> Kesalahan tidak dapat diperbaiki.
     </div>
 
-    <button onclick="goToGoogleForm()" class="btn btn-success btn-full">Lanjut ke Form ➔</button>
-    <button onclick="cancelVerification()" class="btn-danger btn-full">Bukan saya ✕</button>
+    <button onclick="goToGoogleForm()" class="btn btn-success btn-full">Lanjut ke Form </button>
+    <button onclick="cancelVerification()" class="btn-danger btn-full">Bukan saya </button>
 </div>
 
         <div class="tips-box">
-            <h3 class="tips-title">Tips Penting💡</h3>
+            <h3 class="tips-title">Tips Penting</h3>
             <ul class="list">
                 <li>Kamu akan diarahkan ke Google Form untuk mengirimkan tugas pengganti.</li>
                 <li>Di Google Form, identitas akan terisi otomatis. Tidak perlu mengisi ulang.</li>
